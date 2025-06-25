@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 Smart Inventory Frontend
 
-## Getting Started
+Smart Inventory is a modern web application to manage your income, expenses, budgets, and inventory efficiently — all from a single dashboard. This is the **frontend** built with **Next.js** and **Tailwind CSS**, designed for smooth performance and responsiveness.
 
-First, run the development server:
+---
+
+## 📦 Features
+
+- 📊 **Dashboard Overview**
+  - Total income/expense summaries
+  - Budget usage alerts
+  - Low-stock inventory warnings
+
+- 💸 **Expense Tracking**
+  - Categorize income and expenses
+  - Budget limits with live alerts
+
+- 📦 **Inventory Management**
+  - Add/edit products
+  - Track stock quantity
+  - Alerts for low stock
+
+- 📁 **Category & Budget Management**
+  - CRUD for categories
+  - Monthly budget planning
+
+- 🧑‍💻 **User Authentication**
+  - Secure login & signup
+  - Session-based access control
+
+- 🔍 **Search, Filter, and Charts**
+  - Filter by date/category
+  - Pie/Bar/Line graphs using Recharts
+
+---
+
+## ⚙️ Tech Stack
+
+- [Next.js](https://nextjs.org/)
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Recharts](https://recharts.org/)
+- [Lucide Icons](https://lucide.dev/)
+- [ShadCN UI](https://ui.shadcn.dev/) (for beautiful components)
+- API: Backend in PHP or Node.js (configurable)
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repo
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+git clone https://github.com/your-username/smart-inventory-frontend.git
+cd smart-inventory-frontend
