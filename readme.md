@@ -47,7 +47,7 @@ This project includes:
 ---
 
 ## 📁 Project Structure
-
+```
 smart-inventory/
 │
 ├── frontend/ # Next.js + Tailwind UI
@@ -55,7 +55,7 @@ smart-inventory/
 │ ├── components/
 │ ├── services/
 │ └── ...
-|
+│
 ├── backend/ # PHP REST API
 │ ├── handlers/
 │ ├── models/
@@ -67,6 +67,7 @@ smart-inventory/
 ├── README.md # Full project overview (you are here)
 └── LICENSE
 
+```
 ---
 
 ## 🚀 Getting Started
