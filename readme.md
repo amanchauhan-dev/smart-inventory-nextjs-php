@@ -55,7 +55,7 @@ smart-inventory/
 │ ├── components/
 │ ├── services/
 │ └── ...
-│
+|
 ├── backend/ # PHP REST API
 │ ├── handlers/
 │ ├── models/
