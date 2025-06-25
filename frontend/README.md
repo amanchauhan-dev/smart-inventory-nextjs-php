@@ -45,11 +45,3 @@ Smart Inventory is a modern web application to manage your income, expenses, bud
 - API: Backend in PHP or Node.js (configurable)
 
 ---
-
-## 🚀 Getting Started
-
-### 1. Clone the Repo
-
-```bash
-git clone https://github.com/your-username/smart-inventory-frontend.git
-cd smart-inventory-frontend

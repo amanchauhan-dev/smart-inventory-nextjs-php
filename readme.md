@@ -48,3 +48,56 @@ This project includes:
 
 ## 📁 Project Structure
 
+smart-inventory/
+│
+├── frontend/ # Next.js + Tailwind UI
+│ ├── app/
+│ ├── components/
+│ ├── services/
+│ └── ...
+│
+├── backend/ # PHP REST API
+│ ├── handlers/
+│ ├── models/
+│ ├── routes/
+│ ├── db.php
+│ └── index.php
+│
+├── .env.example # Environment template
+├── README.md # Full project overview (you are here)
+└── LICENSE
+
+---
+
+## 🚀 Getting Started
+
+### 📦 1. Clone the Repo
+
+```bash
+git clone https://github.com/your-username/smart-inventory.git
+cd smart-inventory
+
+```
+
+### 🧑‍🎨 2. Frontend Setup
+
+```bash
+cd frontend
+npm install
+cp .env.local.example .env.local
+# Edit API URL in .env.local
+npm run dev
+
+```
+
+### 🛠️ 3. Backend Setup (PHP)
+
+```bash
+cd backend
+# Make sure you have PHP, Composer and MySQL
+# Import database schema (from db/schema.sql or migrations)
+# Configure database in db.php or .env (if used)
+php -S localhost:8000
+
+
+```
