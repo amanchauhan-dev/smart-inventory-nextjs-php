@@ -1,7 +1,7 @@
 -- Drop and create the database
-DROP DATABASE IF EXISTS smart_inventory;
-CREATE DATABASE smart_inventory;
-USE smart_inventory;
+-- DROP DATABASE IF EXISTS smart_inventory;
+-- CREATE DATABASE smart_inventory;
+-- USE smart_inventory;
 
 
 CREATE TABLE organisations (

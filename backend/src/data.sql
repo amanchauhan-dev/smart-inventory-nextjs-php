@@ -1,6 +1,6 @@
 
 
-USE smart_inventory;
+-- USE smart_inventory;
 
 
 -- Seed data for organisation table
