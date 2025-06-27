@@ -24,6 +24,9 @@ export type RefresherContextType = {
     // product
     refreshProductsFlag: number;
     refreshProducts: () => void,
+    // user
+    refreshUsersFlag: number;
+    refreshUsers: () => void,
 }
 
 
@@ -37,6 +40,7 @@ function RefresherProvider({ children }: { children: ReactNode }) {
     const [refreshIncomeCategoriesFlag, setRefreshIncomeCategoriesFlag] = useState<number>(0)
     const [refreshProductCategoriesFlag, setRefreshProductCategoriesFlag] = useState<number>(0)
     const [refreshProductsFlag, setRefreshProductsFlag] = useState<number>(0)
+    const [refreshUsersFlag, setRefreshUsersFlag] = useState<number>(0)
 
     const refreshDashboard = () => { setRefreshDashboardFlage(e => e + 1) }
     const refreshIncomes = () => { setRefreshIncomesFlag(e => e + 1) }
@@ -45,6 +49,7 @@ function RefresherProvider({ children }: { children: ReactNode }) {
     const refreshProductCategories = () => { setRefreshProductCategoriesFlag(e => e + 1) }
     const refreshProducts = () => { setRefreshProductsFlag(e => e + 1) }
     const refreshIncomeCategories = () => { setRefreshIncomeCategoriesFlag(e => e + 1) }
+    const refreshUsers = () => { setRefreshUsersFlag(e => e + 1) }
 
     return (
         <RefresherContext.Provider value={{
@@ -61,7 +66,9 @@ function RefresherProvider({ children }: { children: ReactNode }) {
             refreshProducts,
             refreshProductsFlag,
             refreshIncomeCategories,
-            refreshIncomeCategoriesFlag
+            refreshIncomeCategoriesFlag,
+            refreshUsersFlag,
+            refreshUsers
         }}>
             {children}
         </RefresherContext.Provider>

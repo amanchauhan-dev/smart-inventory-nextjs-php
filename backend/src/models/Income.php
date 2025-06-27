@@ -14,8 +14,8 @@ class Income
         $this->db = Database::connect();
     }
 
-    // ✅ Get all incomes for a user (optional filters: category, date range)
-    public function all($userId, $filters = [])
+    // ✅ Get all incomes for a org (optional filters: category, date range)
+    public function all($orgId, $filters = [])
     {
         $offset = '0';
         $limit = '50';
@@ -28,14 +28,14 @@ class Income
         }
         $countSql = "SELECT count(id) as count
                 FROM incomes
-                WHERE user_id = :user_id";
+                WHERE org_id = :org_id";
 
-        $sql = "SELECT i.id, i.amount, i.date, c.name as category, i.category_id, i.notes, i.created_at
+        $sql = "SELECT i.id, i.amount, i.org_id, i.date, c.name as category, i.category_id, i.notes, i.created_at
                 FROM incomes i
                 LEFT JOIN incomes_categories c ON i.category_id = c.id
-                WHERE i.user_id = :user_id";
+                WHERE i.org_id = :org_id";
 
-        $params = ['user_id' => $userId];
+        $params = ['org_id' => $orgId];
 
         if (!empty($filters['category_id']) && is_numeric($filters['category_id']) && $filters['category_id'] > 0) {
             $countSql .= " AND category_id = :category_id";
@@ -74,38 +74,38 @@ class Income
     }
 
     // ✅ Get a single income record
-    public function find($id, $userId)
+    public function find($id, $orgId)
     {
-        $stmt = $this->db->prepare("SELECT i.id, i.amount, i.date, c.name as category, i.category_id, i.notes, i.   created_at
+        $stmt = $this->db->prepare("SELECT i.id,i.org_id, i.amount, i.date, c.name as category, i.category_id, i.notes, i.   created_at
                 FROM incomes i
                 LEFT JOIN incomes_categories c ON i.category_id = c.id
-                WHERE i.id=? AND i.user_id = ?");
-        $stmt->execute([$id, $userId]);
+                WHERE i.id=? AND i.org_id = ?");
+        $stmt->execute([$id, $orgId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // ✅ Create income
     public function create($data)
     {
-        $stmt = $this->db->prepare("INSERT INTO incomes (user_id, amount, date, category_id, notes) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $this->db->prepare("INSERT INTO incomes (org_id, amount, date, category_id, notes) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([
-            $data['user_id'],
+            $data['org_id'],
             $data['amount'],
             $data['date'],
             $data['category_id'],
             $data['notes'] ?? null
         ]);
 
-        return $this->find($this->db->lastInsertId(), $data['user_id']);
+        return $this->find($this->db->lastInsertId(), $data['org_id']);
     }
 
     // ✅ Update income
-    public function update($id, $userId, $data, )
+    public function update($id, $orgId, $data, )
     {
         $stmt = $this->db->prepare("
             UPDATE incomes
             SET category_id = ?, amount = ?, date = ?, notes = ?
-            WHERE id = ? AND user_id = ?
+            WHERE id = ? AND org_id = ?
         ");
         $stmt->execute([
             $data['category_id'],
@@ -113,16 +113,16 @@ class Income
             $data['date'],
             $data['notes'] ?? null,
             $id,
-            $userId,
+            $orgId,
         ]);
 
-        return $this->find($id, $userId);
+        return $this->find($id, $orgId);
     }
 
     // ✅ Delete income
-    public function delete($id, $userId)
+    public function delete($id, $orgId)
     {
-        $stmt = $this->db->prepare("DELETE FROM incomes WHERE id = ? AND user_id = ?");
-        return $stmt->execute([$id, $userId]);
+        $stmt = $this->db->prepare("DELETE FROM incomes WHERE id = ? AND org_id = ?");
+        return $stmt->execute([$id, $orgId]);
     }
 }

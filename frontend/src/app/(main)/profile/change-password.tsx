@@ -1,12 +1,15 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { Lock } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
+import api from '@/lib/axios'
+import Loader from '@/components/loader'
+import PasswordInput from '@/components/password-input'
 
 const Schema = z.object({
     currentPassword: z.string().min(8, 'Current password is required'),
@@ -27,17 +30,33 @@ const Schema = z.object({
 type FormValues = z.infer<typeof Schema>
 
 function ChangePassword() {
+    const [loading, setLaoding] = useState<boolean>(false)
     const form = useForm<FormValues>({
         resolver: zodResolver(Schema),
         defaultValues: {
+            currentPassword: "",
             password: '',
             confirmPassword: '',
         },
     })
 
-    const onSubmit = (data: FormValues) => {
-        console.log("Form submitted with data:", data);
-        // Here you would typically send the data to your backend API to update the user profile
+    const onSubmit = async (values: FormValues) => {
+        setLaoding(true)
+        try {
+            const { status, data } = await api.post("/update-password", {
+                currentPassword: values.currentPassword,
+                newPassword: values.password
+            })
+            if (status === 200) {
+                toast.success(data.message || "Password changed!")
+            } else {
+                throw new Error("Invalid Password")
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to change password please try again later")
+        } finally {
+            setLaoding(false)
+        }
     }
 
     return (
@@ -53,7 +72,7 @@ function ChangePassword() {
                                 <FormItem>
                                     <FormLabel>Current Password</FormLabel>
                                     <FormControl>
-                                        <Input
+                                        <PasswordInput
                                             {...field}
                                             type="password"
                                             placeholder="Enter your current password"
@@ -73,7 +92,7 @@ function ChangePassword() {
                                 <FormItem>
                                     <FormLabel>New Password</FormLabel>
                                     <FormControl>
-                                        <Input
+                                        <PasswordInput
                                             {...field}
                                             type="password"
                                             placeholder="Enter your password"
@@ -93,7 +112,7 @@ function ChangePassword() {
                                 <FormItem>
                                     <FormLabel>Confirm New Password</FormLabel>
                                     <FormControl>
-                                        <Input
+                                        <PasswordInput
                                             {...field}
                                             type="password"
                                             placeholder="Reenter your password"
@@ -106,7 +125,11 @@ function ChangePassword() {
                                 </FormItem>
                             )}
                         />
-                        <Button>SUBMIT</Button>
+                        <Button disabled={loading}>
+                            {
+                                loading ? <Loader /> : "CHANGE PASSWORD"
+                            }
+                        </Button>
                     </div>
                 </div>
             </form>

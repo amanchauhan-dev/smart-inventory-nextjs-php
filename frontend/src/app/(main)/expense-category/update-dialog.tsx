@@ -66,7 +66,7 @@ export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: Expen
                 toast.success(data?.message || 'Failed to update')
             }
         } catch (error: any) {
-            toast.error(error.message || 'Failed to update')
+            toast.error(error.response?.data?.message || 'Failed to update')
         } finally {
             setLoading(false)
             setOpen(false)
@@ -81,7 +81,7 @@ export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: Expen
                 <DialogHeader>
                     <DialogTitle>Update Expense Category</DialogTitle>
                     <DialogDescription>
-                        Record your category details. Click save when you&apos;re done.
+                        Change your category details. Click update when you&apos;re done.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -125,7 +125,7 @@ export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: Expen
                                 </Button>
                             </DialogClose>
                             <Button disabled={loading} type="submit">
-                                {loading ? <Loader /> : "ADD"}
+                                {loading ? <Loader /> : "UPDATE"}
                             </Button>
                         </DialogFooter>
                     </form>

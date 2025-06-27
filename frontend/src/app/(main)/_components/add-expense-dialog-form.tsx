@@ -147,8 +147,8 @@ export function AddExpenseDialogForm() {
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
                                         <Input
-                                            type="number"
-                                            placeholder="Enter ammount"
+                                            type="text"
+                                            placeholder="Enter amount"
                                             min="0"
                                             {...field}
                                             value={field.value.toString()}

@@ -9,6 +9,7 @@ use Src\Controllers\IncomeController;
 use Src\Controllers\ProductCategoryController;
 use Src\Controllers\ProductController;
 use Src\Controllers\ProfileController;
+use Src\Controllers\UserController;
 
 
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
@@ -21,6 +22,7 @@ require_once __DIR__ . '/../controllers/ProductCategoryController.php';
 require_once __DIR__ . '/../controllers/ProductController.php';
 require_once __DIR__ . '/../controllers/IncomeCategoryController.php';
 require_once __DIR__ . '/../controllers/ProfileController.php';
+require_once __DIR__ . '/../controllers/UserController.php';
 
 $uri = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
 
@@ -64,12 +66,19 @@ switch ($resource) {
             default => response(405, 'Method Not Allowed'),
         };
         break;
+    case 'check-email':
+        $ctrl = new AuthController();
+        match ($method) {
+            'POST' => $ctrl->checkUnigeEmail($input),
+            default => response(405, 'Method Not Allowed'),
+        };
+        break;
     //  dashboard routes
     case 'dashboard':
         requireAuth();
         $ctrl = new DashboardController();
         match ($method) {
-            'GET' => $ctrl->summary($auth_user["id"]),
+            'GET' => $ctrl->summary($auth_user["org_id"]),
             default => response(405, 'Method Not Allowed'),
         };
         break;
@@ -77,7 +86,7 @@ switch ($resource) {
         requireAuth();
         $ctrl = new DashboardController();
         match ($method) {
-            'GET' => $ctrl->alerts($auth_user["id"]),
+            'GET' => $ctrl->alerts($auth_user["org_id"]),
             default => response(405, 'Method Not Allowed'),
         };
         break;
@@ -85,7 +94,7 @@ switch ($resource) {
         requireAuth();
         $ctrl = new DashboardController();
         match ($method) {
-            'GET' => $ctrl->trends($auth_user["id"], $_GET),
+            'GET' => $ctrl->trends($auth_user["org_id"], $_GET),
             default => response(405, 'Method Not Allowed'),
         };
         break;
@@ -93,7 +102,7 @@ switch ($resource) {
         requireAuth();
         $ctrl = new DashboardController();
         match ($method) {
-            'GET' => $ctrl->budgetExpense($auth_user["id"], $_GET),
+            'GET' => $ctrl->budgetExpense($auth_user["org_id"], $_GET),
             default => response(405, 'Method Not Allowed'),
         };
         break;
@@ -101,7 +110,7 @@ switch ($resource) {
         requireAuth();
         $ctrl = new DashboardController();
         match ($method) {
-            'GET' => $ctrl->incomeCategory($auth_user["id"], $_GET),
+            'GET' => $ctrl->incomeCategory($auth_user["org_id"], $_GET),
             default => response(405, 'Method Not Allowed'),
         };
         break;
@@ -111,15 +120,15 @@ switch ($resource) {
         requireAuth();
         $ctrl = new IncomeController();
         if ($method === 'GET' && $id) {
-            $ctrl->show($auth_user['id'], $id); // get single income by id
+            $ctrl->show($auth_user["org_id"], $id); // get single income by id
         } elseif ($method === 'GET') {
-            $ctrl->index($auth_user['id'], $_GET); // list all
+            $ctrl->index($auth_user["org_id"], $_GET); // list all
         } elseif ($method === 'POST') {
-            $ctrl->store($auth_user['id'], $input);
+            $ctrl->store($auth_user["org_id"], $input);
         } elseif ($method === 'PUT' && $id) {
-            $ctrl->update($auth_user['id'], $id, $input);
+            $ctrl->update($auth_user["org_id"], $id, $input);
         } elseif ($method === 'DELETE' && $id) {
-            $ctrl->destroy($auth_user['id'], $id);
+            $ctrl->destroy($auth_user["org_id"], $id);
         } else {
             response(405, 'Method Not Allowed');
         }
@@ -130,11 +139,11 @@ switch ($resource) {
         $ctrl = new IncomeCategoryController();
         match ($method) {
             'GET' => isset($id)
-            ? $ctrl->show($auth_user['id'], $id)
-            : $ctrl->index($auth_user['id'], $_GET),
-            'POST' => $ctrl->store($auth_user['id'], $input),
-            'PUT' => $ctrl->update($auth_user['id'], $id, $input),
-            'DELETE' => $ctrl->destroy($auth_user['id'], $id),
+            ? $ctrl->show($auth_user["org_id"], $id)
+            : $ctrl->index($auth_user["org_id"], $_GET),
+            'POST' => $ctrl->store($auth_user["org_id"], $input),
+            'PUT' => $ctrl->update($auth_user["org_id"], $id, $input),
+            'DELETE' => $ctrl->destroy($auth_user["org_id"], $id),
             default => response(405, 'Method Not Allowed'),
         };
         break;
@@ -145,11 +154,11 @@ switch ($resource) {
         $ctrl = new ExpenseCategoryController();
         match ($method) {
             'GET' => isset($id)
-            ? $ctrl->show($auth_user['id'], $id)
-            : $ctrl->index($auth_user['id'], $_GET),
-            'POST' => $ctrl->store($auth_user['id'], $input),
-            'PUT' => $ctrl->update($auth_user['id'], $id, $input),
-            'DELETE' => $ctrl->destroy($auth_user['id'], $id),
+            ? $ctrl->show($auth_user["org_id"], $id)
+            : $ctrl->index($auth_user["org_id"], $_GET),
+            'POST' => $ctrl->store($auth_user["org_id"], $input),
+            'PUT' => $ctrl->update($auth_user["org_id"], $id, $input),
+            'DELETE' => $ctrl->destroy($auth_user["org_id"], $id),
             default => response(405, 'Method Not Allowed'),
         };
         break;
@@ -159,15 +168,15 @@ switch ($resource) {
         requireAuth();
         $ctrl = new ExpenseController();
         if ($method === 'GET' && $id) {
-            $ctrl->show($auth_user['id'], $id); // get single by id
+            $ctrl->show($auth_user["org_id"], $id); // get single by id
         } elseif ($method === 'GET') {
-            $ctrl->index($auth_user['id'], $_GET); // list all
+            $ctrl->index($auth_user["org_id"], $_GET); // list all
         } elseif ($method === 'POST') {
-            $ctrl->store($auth_user['id'], $input);
+            $ctrl->store($auth_user["org_id"], $input);
         } elseif ($method === 'PUT' && $id) {
-            $ctrl->update($auth_user['id'], $id, $input);
+            $ctrl->update($auth_user["org_id"], $id, $input);
         } elseif ($method === 'DELETE' && $id) {
-            $ctrl->destroy($auth_user['id'], $id);
+            $ctrl->destroy($auth_user["org_id"], $id);
         } else {
             response(405, 'Method Not Allowed');
         }
@@ -179,11 +188,11 @@ switch ($resource) {
         $ctrl = new ProductCategoryController();
         match ($method) {
             'GET' => isset($id)
-            ? $ctrl->show($auth_user['id'], $id)
-            : $ctrl->index($auth_user['id']),
-            'POST' => $ctrl->store($auth_user['id'], $input),
-            'PUT' => $ctrl->update($auth_user['id'], $id, $input),
-            'DELETE' => $ctrl->destroy($auth_user['id'], $id),
+            ? $ctrl->show($auth_user["org_id"], $id)
+            : $ctrl->index($auth_user["org_id"]),
+            'POST' => $ctrl->store($auth_user["org_id"], $input),
+            'PUT' => $ctrl->update($auth_user["org_id"], $id, $input),
+            'DELETE' => $ctrl->destroy($auth_user["org_id"], $id),
             default => response(405, 'Method Not Allowed'),
         };
         break;
@@ -193,17 +202,16 @@ switch ($resource) {
         $ctrl = new ProductController();
         match ($method) {
             'GET' => isset($id)
-            ? $ctrl->show($auth_user['id'], $id)
-            : $ctrl->index($auth_user['id'], $_GET),
-            'POST' => $ctrl->store($auth_user['id'], $input),
-            'PUT' => $ctrl->update($auth_user['id'], $id, $input),
-            'DELETE' => $ctrl->destroy($auth_user['id'], $id),
+            ? $ctrl->show($auth_user["org_id"], $id)
+            : $ctrl->index($auth_user["org_id"], $_GET),
+            'POST' => $ctrl->store($auth_user["org_id"], $input),
+            'PUT' => $ctrl->update($auth_user["org_id"], $id, $input),
+            'DELETE' => $ctrl->destroy($auth_user["org_id"], $id),
             default => response(405, 'Method Not Allowed'),
         };
         break;
 
 
-    // profile
     // profile image
     case 'update-profile':
         requireAuth();
@@ -222,15 +230,42 @@ switch ($resource) {
             default => response(405, 'Method Not Allowed'),
         };
         break;
+
     // profile password
     case 'update-password':
         requireAuth();
         $ctrl = new ProfileController();
         match ($method) {
-            'POST' => $ctrl->updatePassword($auth_user["id"], $input),
+            'POST' => $ctrl->updatePassword($auth_user["email"], $input),
             default => response(405, 'Method Not Allowed'),
         };
         break;
+
+    // profile password
+    case 'update-username':
+        requireAuth();
+        $ctrl = new ProfileController();
+        match ($method) {
+            'POST' => $ctrl->updateUsername($auth_user["id"], $input),
+            default => response(405, 'Method Not Allowed'),
+        };
+        break;
+
+    // users
+    case 'users':
+        requireAuth();
+        $ctrl = new UserController();
+        match ($method) {
+            'GET' => isset($id)
+            ? $ctrl->show($id)
+            : $ctrl->index($auth_user["org_id"], $_GET),
+            'POST' => $ctrl->store($auth_user["org_id"], $input),
+            'PUT' => $ctrl->update($id, $input),
+            'DELETE' => $ctrl->destroy($id),
+            default => response(405, 'Method Not Allowed'),
+        };
+        break;
+
 
 
     default:

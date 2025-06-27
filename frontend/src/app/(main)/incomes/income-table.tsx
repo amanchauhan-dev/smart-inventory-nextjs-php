@@ -68,7 +68,7 @@ function IncomeTable() {
                     toast.error('Failed to load income data')
                 }
             } catch (error: any) {
-                toast.error(error.message || "Failed to load incomes")
+                toast.error(error.response?.data?.message || "Failed to load incomes")
             } finally {
                 setLoading(false);
             }
@@ -82,7 +82,7 @@ function IncomeTable() {
                 const { data } = await api.get('/income-categories')
                 setCategories(data.data.categories)
             } catch (error: any) {
-                toast.error(error.message || 'Failed to load categories')
+                toast.error(error.response?.data?.message || 'Failed to load categories')
             }
         }
         fetchCategories()
@@ -119,7 +119,7 @@ function IncomeTable() {
                 toast.error(data.message || "Failed to delete")
             }
         } catch (error: any) {
-            toast.error(error.message || "Failed to delete income")
+            toast.error(error.response?.data?.message || "Failed to delete income")
         } finally {
             setDeleteLoading(false)
         }

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const IncomeCategorySchema = z.object({
     id: z.number(),
-    user_id: z.number(),
+    org_id: z.number(),
     name: z.string().max(100),
 });
 

@@ -52,7 +52,7 @@ function ExpenseCategoryTable() {
                     toast.error('Failed to load data')
                 }
             } catch (error: any) {
-                toast.error(error.message || "Failed to load")
+                toast.error(error.response?.data?.message || "Failed to load")
             } finally {
                 setLoading(false);
             }
@@ -86,7 +86,7 @@ function ExpenseCategoryTable() {
                 toast.error(data.message || "Failed to delete")
             }
         } catch (error: any) {
-            toast.error(error.message || "Failed to delete ")
+            toast.error(error.response?.data?.message || "Failed to delete ")
         } finally {
             setDeleteLoading(false)
         }

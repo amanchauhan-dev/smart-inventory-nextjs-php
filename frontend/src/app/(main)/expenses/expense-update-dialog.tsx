@@ -83,7 +83,7 @@ export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense
             form.reset({
                 amount: data.amount ? parseFloat(data.amount.toString()) : 0,
                 category_id: data.category_id ? data.category_id.toString() : "",
-                notes: data.notes,
+                notes: data.notes || '',
                 date: new Date(data.date),
             })
         }
@@ -96,7 +96,7 @@ export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense
                     const { data } = await api.get('/expense-categories')
                     setCategories(data.data.categories)
                 } catch (error: any) {
-                    toast.error(error.message || 'Failed to load categories')
+                    toast.error(error.response?.data?.message || 'Failed to load categories')
                 }
             }
             fetchCategories()
@@ -132,9 +132,9 @@ export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Add New Expense</DialogTitle>
+                    <DialogTitle>Update Expense</DialogTitle>
                     <DialogDescription>
-                        Record your expense details. Click save when you&apos;re done.
+                        Change your expense details. Click update when you&apos;re done.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -178,7 +178,7 @@ export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
                                         <Input
-                                            type="number"
+                                            type="text"
                                             placeholder="0.00"
                                             min="0"
                                             {...field}
@@ -240,6 +240,7 @@ export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense
                                             placeholder="Additional information"
                                             className="resize-none"
                                             {...field}
+                                            value={field.value ?? ''}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -254,7 +255,7 @@ export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense
                                 </Button>
                             </DialogClose>
                             <Button disabled={loading} type="submit">
-                                {loading ? <Loader /> : "Add Expense"}
+                                {loading ? <Loader /> : "UPDATE"}
                             </Button>
                         </DialogFooter>
                     </form>

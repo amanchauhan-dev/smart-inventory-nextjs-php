@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 
 
 export type AuthContextType = {
-    user: User | null;
+    user: User;
     login: (user: User) => void,
     logout: () => void,
     refreshUser: () => void
@@ -23,7 +23,7 @@ export const AuthContext = React.createContext<AuthContextType | null>(null)
 
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null)
+    const [user, setUser] = useState<User>()
     const [loading, setLoading] = useState(true);
 
     const router = useRouter()
@@ -85,7 +85,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (loading || !user) {
         return (
-            <Skeleton className='h-svh w-svw flex justify-center items-center'>
+            <Skeleton className='h-svh w-svw flex justify-center rounded-none items-center'>
                 <Loader />
             </Skeleton>
         )

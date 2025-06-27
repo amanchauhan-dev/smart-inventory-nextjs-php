@@ -58,7 +58,7 @@ export function CreateDialogForm() {
                 toast.success(data?.message || 'Failed to create')
             }
         } catch (error: any) {
-            toast.error(error.message || 'Failed to create')
+            toast.error(error.response?.data?.message || 'Failed to create')
         } finally {
             setLoading(false)
             setOpen(false)

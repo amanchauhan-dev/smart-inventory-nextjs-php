@@ -14,8 +14,8 @@ class Expense
         $this->db = Database::connect();
     }
 
-    // ✅ Get all expenses for a user (optional filters: category, date range)
-    public function all($userId, $filters = [])
+    // ✅ Get all expenses for a org (optional filters: category, date range)
+    public function all($orgId, $filters = [])
     {
         $offset = '0';
         $limit = '50';
@@ -31,15 +31,15 @@ class Expense
         $countSql = "SELECT count(e.id) as count
                         FROM expenses e
                     JOIN expense_categories ec ON e.category_id = ec.id
-                    WHERE e.user_id = :user_id";
-        $sql = "SELECT e.id, e.amount, e.date, e.notes, e.created_at,
+                    WHERE e.org_id = :org_id";
+        $sql = "SELECT e.id, e.amount, e.org_id, e.date, e.notes, e.created_at,
                        ec.name AS category,
                        ec.id AS category_id
                 FROM expenses e
                 JOIN expense_categories ec ON e.category_id = ec.id
-                WHERE e.user_id = :user_id";
+                WHERE e.org_id = :org_id";
 
-        $params = ['user_id' => $userId];
+        $params = ['org_id' => $orgId];
 
         if (!empty($filters['category_id']) && is_numeric($filters['category_id']) && $filters['category_id'] > 0) {
             $countSql .= " AND e.category_id = :category_id";
@@ -78,17 +78,17 @@ class Expense
     }
 
     // ✅ Get a single expense
-    public function find($id, $userId)
+    public function find($id, $orgId)
     {
         $stmt = $this->db->prepare("
-            SELECT e.id, e.amount, e.date, e.notes, e.created_at,
+            SELECT e.id, e.amount, e.date, e.org_id, e.notes, e.created_at,
                    ec.name AS category,
                     ec.id AS category_id
             FROM expenses e
             JOIN expense_categories ec ON e.category_id = ec.id
-            WHERE e.id = ? AND e.user_id = ?
+            WHERE e.id = ? AND e.org_id = ?
         ");
-        $stmt->execute([$id, $userId]);
+        $stmt->execute([$id, $orgId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -96,27 +96,27 @@ class Expense
     public function create($data)
     {
         $stmt = $this->db->prepare("
-            INSERT INTO expenses (user_id, category_id, amount, date, notes)
+            INSERT INTO expenses (org_id, category_id, amount, date, notes)
             VALUES (?, ?, ?, ?, ?)
         ");
         $stmt->execute([
-            $data['user_id'],
+            $data['org_id'],
             $data['category_id'],
             $data['amount'],
             $data['date'],
             $data['notes'] ?? null,
         ]);
 
-        return $this->find($this->db->lastInsertId(), $data['user_id']);
+        return $this->find($this->db->lastInsertId(), $data['org_id']);
     }
 
     // ✅ Update existing expense
-    public function update($id, $userId, $data)
+    public function update($id, $orgId, $data)
     {
         $stmt = $this->db->prepare("
             UPDATE expenses
             SET category_id = ?, amount = ?, date = ?, notes = ?
-            WHERE id = ? AND user_id = ?
+            WHERE id = ? AND org_id = ?
         ");
         $stmt->execute([
             $data['category_id'],
@@ -124,16 +124,16 @@ class Expense
             $data['date'],
             $data['notes'] ?? null,
             $id,
-            $userId,
+            $orgId,
         ]);
 
-        return $this->find($id, $userId);
+        return $this->find($id, $orgId);
     }
 
     // ✅ Delete expense
-    public function delete($id, $userId)
+    public function delete($id, $orgId)
     {
-        $stmt = $this->db->prepare("DELETE FROM expenses WHERE id = ? AND user_id = ?");
-        return $stmt->execute([$id, $userId]);
+        $stmt = $this->db->prepare("DELETE FROM expenses WHERE id = ? AND org_id = ?");
+        return $stmt->execute([$id, $orgId]);
     }
 }

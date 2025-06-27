@@ -71,7 +71,7 @@ export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data:
             form.reset({
                 amount: parseFloat(data.amount.toString()),
                 category_id: data.category_id ? data.category_id.toString() : "",
-                notes: data.notes,
+                notes: data.notes || '',
                 date: new Date(data.date),
             })
         }
@@ -84,7 +84,7 @@ export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data:
                     const { data } = await api.get('/income-categories')
                     setCategories(data.data.categories)
                 } catch (error: any) {
-                    toast.error(error.message || 'Failed to load categories')
+                    toast.error(error.response?.data?.message || 'Failed to load categories')
                 }
             }
             fetchCategories()
@@ -101,7 +101,7 @@ export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data:
                 toast.success(data?.message || 'Failed to update income')
             }
         } catch (error: any) {
-            toast.error(error.message || 'Failed to update income')
+            toast.error(error.response?.data?.message || 'Failed to update income')
         } finally {
             setLoading(false)
             setOpen(false)
@@ -114,9 +114,9 @@ export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data:
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Add New Income</DialogTitle>
+                    <DialogTitle>Update Income</DialogTitle>
                     <DialogDescription>
-                        Record your income details. Click save when you&apos;re done.
+                        Change your income details. Click update when you&apos;re done.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -129,7 +129,7 @@ export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data:
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
                                         <Input
-                                            type="number"
+                                            type="text"
                                             placeholder="0.00"
                                             min={0}
                                             {...field}
@@ -233,7 +233,7 @@ export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data:
                                 </Button>
                             </DialogClose>
                             <Button disabled={loading} type="submit">
-                                {loading ? <Loader /> : "ADD"}
+                                {loading ? <Loader /> : "UPDATE"}
                             </Button>
                         </DialogFooter>
                     </form>

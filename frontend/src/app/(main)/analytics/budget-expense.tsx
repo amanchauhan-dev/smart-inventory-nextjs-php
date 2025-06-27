@@ -68,7 +68,7 @@ export default function BudgetExpense() {
                     throw new Error("Failed to load graph")
                 }
             } catch (error: any) {
-                toast.error(error.message || "Failed to load graph")
+                toast.error(error.response?.data?.message || "Failed to load graph")
             } finally {
                 setLoading(false)
             }

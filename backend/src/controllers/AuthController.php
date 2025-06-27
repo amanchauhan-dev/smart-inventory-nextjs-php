@@ -1,36 +1,52 @@
 <?php
 namespace Src\Controllers;
 
+use Src\Models\Organisation;
 use Src\Models\User;
 use Src\Helpers\JWT;
 
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Organisation.php';
 require_once __DIR__ . '/../helpers/JWT.php';
 require_once __DIR__ . '/../helpers/Response.php';
 
 class AuthController
 {
     private $userModel;
+    private $model;
 
     public function __construct()
     {
         $this->userModel = new User();
+        $this->model = new Organisation();
     }
 
     public function register($data)
     {
-        if (empty($data['name']) || empty($data['email']) || empty($data['password'])) {
-            return response(400, 'Name, email & password fields are required.');
+        if (empty($data['name']) || empty($data['email']) || empty($data['address']) || empty($data['username']) || empty($data['password'])) {
+            return response(400, 'Name, email, address, username & password is required.');
         }
-
         $existing = $this->userModel->findByEmail($data['email']);
+
         if ($existing) {
             return response(409, 'Email already registered.');
         }
 
-        $user = $this->userModel->create($data);
+        $orgData = $this->model->create($data);
 
-        return response(201, 'User registered successfully.', ['user' => $user]);
+
+        $userData = [
+            "name" => $data["username"],
+            "email" => $data["email"],
+            "password" => $data["password"],
+            "role" => "superadmin",
+            "designation" => "Owner",
+            "org_id" => $orgData["id"],
+        ];
+
+        $userDetail = $this->userModel->create($userData);
+        return response(201, 'organisation created.', ['organisation' => $orgData, "user" => $userDetail]);
+
     }
 
     public function login($data)
@@ -46,7 +62,9 @@ class AuthController
 
         $token = JWT::encode([
             'id' => $user['id'],
-            'email' => $user['email']
+            'email' => $user['email'],
+            'role' => $user['role'],
+            'org_id' => $user['org_id'],
         ]);
 
         return response(200, 'Login successful.', [
@@ -72,5 +90,16 @@ class AuthController
         return response(200, 'Authenticated', ['user' => $user]);
     }
 
+    public function checkUnigeEmail($data)
+    {
+        if (empty($data["email"])) {
+            return response(400, "Email required", []);
+        }
+        $user = $this->userModel->findByEmail($data["email"]);
+        if (!$user) {
+            return response(200, "Email doesn't used yet", ["success" => true]);
+        }
+        return response(200, "Email is in use", ["success" => false]);
+    }
 
 }

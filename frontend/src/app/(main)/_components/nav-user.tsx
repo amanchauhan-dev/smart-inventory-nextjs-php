@@ -27,7 +27,7 @@ export function NavUser() {
                 >
                     <div className="flex items-center gap-2">
                         <Avatar className="h-8 w-8 rounded-full">
-                            <AvatarImage src={user?.profile} alt={user?.name} />
+                            <AvatarImage src={user?.profile || ""} alt={user?.name} />
                             <AvatarFallback className="rounded-full">{user?.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="grid flex-1 text-left text-sm leading-tight">

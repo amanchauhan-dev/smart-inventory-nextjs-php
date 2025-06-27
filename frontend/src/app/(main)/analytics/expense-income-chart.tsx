@@ -64,7 +64,7 @@ export default function ExpenseIncomeChart() {
                     throw new Error("Failed to load graph")
                 }
             } catch (error: any) {
-                toast.error(error.message || "Failed to load graph")
+                toast.error(error.response?.data?.message || "Failed to load graph")
             } finally {
                 setLoading(false)
             }
@@ -150,7 +150,7 @@ export default function ExpenseIncomeChart() {
                             <CartesianGrid vertical={false} strokeDasharray="3 3" />
                             <XAxis dataKey="day" tickLine={false} axisLine={false} />
                             <YAxis
-                                domain={[0, 100000]}
+                                domain={[0, 50000]}
                                 axisLine={false}
                                 tickLine={false}
                                 tickFormatter={(v) => `${formatCurrency(v)}`}

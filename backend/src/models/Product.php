@@ -14,8 +14,8 @@ class Product
         $this->db = Database::connect();
     }
 
-    // ✅ Get all products for a user (with optional filters)
-    public function all($userId, $filters = [])
+    // ✅ Get all products for a org (with optional filters)
+    public function all($orgId, $filters = [])
     {
         $offset = '0';
         $limit = '50';
@@ -29,17 +29,16 @@ class Product
         $countSql = "SELECT count(p.id) as count
                 FROM products p
                 LEFT JOIN product_categories pc ON p.category_id = pc.id
-                WHERE p.user_id = :user_id";
-
+                WHERE p.org_id = :org_id";
         $sql = "SELECT p.id, p.name, p.quantity, p.threshold, p.price,
-                       p.supplier, p.notes, p.created_at, p.updated_at,
-                       pc.name AS category,
-                       pc.id AS category_id
+                    p.supplier, p.notes, p.created_at, p.updated_at,
+                    pc.name AS category,
+                    pc.id AS category_id
                 FROM products p
                 LEFT JOIN product_categories pc ON p.category_id = pc.id
-                WHERE p.user_id = :user_id";
+                WHERE p.org_id = :org_id";
 
-        $params = ['user_id' => $userId];
+        $params = ['org_id' => $orgId];
 
         if (!empty($filters['category_id']) && is_numeric($filters['category_id']) && $filters['category_id'] > 0) {
             $countSql .= " AND p.category_id = :category_id";
@@ -78,7 +77,7 @@ class Product
     }
 
     // ✅ Get a single product
-    public function find($id, $userId)
+    public function find($id, $orgId)
     {
         $stmt = $this->db->prepare("
             SELECT p.id, p.name, p.quantity, p.threshold, p.price,
@@ -87,9 +86,9 @@ class Product
                 pc.id AS category_id
             FROM products p
             LEFT JOIN product_categories pc ON p.category_id = pc.id
-            WHERE p.id = ? AND p.user_id = ?
+            WHERE p.id = ? AND p.org_id = ?
         ");
-        $stmt->execute([$id, $userId]);
+        $stmt->execute([$id, $orgId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -97,11 +96,11 @@ class Product
     public function create($data)
     {
         $stmt = $this->db->prepare("
-            INSERT INTO products (user_id, category_id, name, quantity, threshold, price, supplier, notes)
+            INSERT INTO products (org_id, category_id, name, quantity, threshold, price, supplier, notes)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
-            $data['user_id'],
+            $data['org_id'],
             $data['category_id'] ?? null,
             $data['name'],
             $data['quantity'],
@@ -111,16 +110,16 @@ class Product
             $data['notes'] ?? null
         ]);
 
-        return $this->find($this->db->lastInsertId(), $data['user_id']);
+        return $this->find($this->db->lastInsertId(), $data['org_id']);
     }
 
     // ✅ Update a product
-    public function update($id, $userId, $data)
+    public function update($id, $orgId, $data)
     {
         $stmt = $this->db->prepare("
             UPDATE products
             SET category_id = ?, name = ?, quantity = ?, threshold = ?, price = ?, supplier = ?, notes = ?
-            WHERE id = ? AND user_id = ?
+            WHERE id = ? AND org_id = ?
         ");
         $stmt->execute([
             $data['category_id'] ?? null,
@@ -131,16 +130,16 @@ class Product
             $data['supplier'] ?? null,
             $data['notes'] ?? null,
             $id,
-            $userId
+            $orgId
         ]);
 
-        return $this->find($id, $userId);
+        return $this->find($id, $orgId);
     }
 
     // ✅ Delete a product
-    public function delete($id, $userId)
+    public function delete($id, $orgId)
     {
-        $stmt = $this->db->prepare("DELETE FROM products WHERE id = ? AND user_id = ?");
-        return $stmt->execute([$id, $userId]);
+        $stmt = $this->db->prepare("DELETE FROM products WHERE id = ? AND org_id = ?");
+        return $stmt->execute([$id, $orgId]);
     }
 }

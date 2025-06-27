@@ -106,7 +106,7 @@ export function UpdateProductDialogForm({ data, open, setOpen }: { data: Product
                     const { data } = await api.get('/product-categories')
                     setCategories(data.data.categories)
                 } catch (error: any) {
-                    toast.error(error.message || 'Failed to load categories')
+                    toast.error(error.response?.data?.message || 'Failed to load categories')
                 }
             }
             fetchCategories()
@@ -140,7 +140,7 @@ export function UpdateProductDialogForm({ data, open, setOpen }: { data: Product
                 <DialogHeader>
                     <DialogTitle>Update Product</DialogTitle>
                     <DialogDescription>
-                        Enter product details. Click save when you&apos;re done.
+                        Enter product details. Click update when you&apos;re done.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -243,7 +243,7 @@ export function UpdateProductDialogForm({ data, open, setOpen }: { data: Product
                                         <FormLabel>Price*</FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="number"
+                                                type="text"
                                                 placeholder="Enter price (Rupees)"
                                                 min="0"
                                                 {...field}
@@ -296,7 +296,7 @@ export function UpdateProductDialogForm({ data, open, setOpen }: { data: Product
                                 </Button>
                             </DialogClose>
                             <Button disabled={loading} type="submit">
-                                {loading ? <Loader /> : "Create Product"}
+                                {loading ? <Loader /> : "UPDATE"}
                             </Button>
                         </DialogFooter>
                     </form>

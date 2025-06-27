@@ -15,16 +15,16 @@ class ProductController
     }
 
     // GET /api/Product
-    public function index($userId, $query = [])
+    public function index($orgId, $query = [])
     {
-        $data = $this->productModel->all($userId, $query);
+        $data = $this->productModel->all($orgId, $query);
         return response(200, 'Product fetched.', ['products' => $data['data'], "count" => (int) $data['count']]);
     }
 
     // GET /api/Product/:id
-    public function show($userId, $id)
+    public function show($orgId, $id)
     {
-        $product = $this->productModel->find($id, $userId);
+        $product = $this->productModel->find($id, $orgId);
         if (!$product) {
             return response(404, 'Product not found.');
         }
@@ -32,40 +32,40 @@ class ProductController
     }
 
     // POST /api/Product
-    public function store($userId, $data)
+    public function store($orgId, $data)
     {
         if (empty($data['name']) || empty($data['price']) || empty($data['category_id']) || empty($data['quantity'])) {
             return response(400, 'Name, price, category_id & quantity is required.');
         }
 
-        $data['user_id'] = $userId;
-        $category = $this->productModel->create($data);
-        return response(201, 'Product created.', ['category' => $category]);
+        $data['org_id'] = $orgId;
+        $data = $this->productModel->create($data);
+        return response(201, 'Product created.', ['data' => $data]);
     }
 
     // PUT /api/Product/:id
-    public function update($userId, $id, $data)
+    public function update($orgId, $id, $data)
     {
         if (empty($data['name']) || empty($data['price']) || empty($data['category_id']) || empty($data['quantity'])) {
             return response(400, 'Name, price, category_id & quantity is required.');
         }
 
-        $existing = $this->productModel->find($id, $userId);
+        $existing = $this->productModel->find($id, $orgId);
         if (!$existing) {
             return response(404, 'Product not found.');
         }
-        $updated = $this->productModel->update($id, $userId, $data);
-        return response(200, 'Product updated.', ['category' => $updated]);
+        $updated = $this->productModel->update($id, $orgId, data: $data);
+        return response(200, 'Product updated.', ['data' => $updated]);
     }
 
     // DELETE /api/Product/:id
-    public function destroy($userId, $id)
+    public function destroy($orgId, $id)
     {
-        $existing = $this->productModel->find($id, $userId);
+        $existing = $this->productModel->find($id, $orgId);
         if (!$existing) {
             return response(404, 'Product not found.');
         }
-        $this->productModel->delete($id, $userId);
+        $this->productModel->delete($id, $orgId);
         return response(200, 'Product deleted.');
     }
 }

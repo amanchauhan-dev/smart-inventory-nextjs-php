@@ -11,6 +11,7 @@ export const emailSendOTP = async ({ otp, to }: { otp: string, to: string }): Pr
                 otp: otp.toString(),
                 to: to.toString()
             },
+            process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY!
         )
         if (res.status === 200) {
             return { success: true, message: 'Email sent successfully' }

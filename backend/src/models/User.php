@@ -17,7 +17,7 @@ class User
 
     // crud methods
 
-    public function all($filters = [])
+    public function all($orgId, $filters = [])
     {
         $offset = '0';
         $limit = '50';
@@ -28,14 +28,81 @@ class User
         if (!empty($filters['offset']) && is_numeric($filters['offset'])) {
             $offset = $filters['offset'];
         }
-        $sql = "SELECT id, name,profile, email, created_at FROM users LIMIT {$limit} OFFSET {$offset}";
-        $stmt = $this->db->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $countSql = "SELECT 
+                       count(u.id) as count
+                FROM users u 
+                LEFT JOIN organisations o
+                ON u.org_id = o.id
+                WHERE u.org_id = :org_id AND u.role != 'superadmin'";
+
+        $sql = "SELECT 
+                        u.id,
+                        u.name,
+                        u.role,
+                        u.designation,
+                        u.profile,
+                        u.email,
+                        u.created_at,
+                        u.org_id,
+                        o.name as org_name,
+                        o.address as org_address
+                FROM users u 
+                LEFT JOIN organisations o
+                ON u.org_id = o.id
+                WHERE u.org_id = :org_id AND u.role != 'superadmin'";
+
+        $params = ['org_id' => $orgId];
+
+        if (!empty($filters['search'])) {
+            $countSql .= " AND (u.name LIKE :search OR u.email LIKE :search)";
+            $sql .= " AND (u.name LIKE :search OR u.email LIKE :search)";
+            $params['search'] = "%{$filters['search']}%";
+        }
+        if (!empty($filters['role']) && ($filters['role'] == 'staff' || $filters['role'] == 'admin')) {
+            $countSql .= " AND u.role = :role";
+            $sql .= " AND  u.role = :role";
+            $params['role'] = $filters['role'];
+        }
+
+        $sql .= " ORDER BY u.created_at DESC";
+        $sql .= " LIMIT {$limit} OFFSET {$offset}";
+
+        // run count
+        $stmt = $this->db->prepare($countSql);
+        $stmt->execute($params);
+        $count = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // run data
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            "count" => $count[0]["count"],
+            "data" => $data
+        ];
     }
 
     public function find($id)
     {
-        $stmt = $this->db->prepare("SELECT id, name, email,profile, created_at FROM users WHERE id = ?");
+        $stmt = $this->db->prepare(
+            "SELECT 
+                        u.id,
+                        u.name,
+                        u.role,
+                        u.designation,
+                        u.profile,
+                        u.email,
+                        u.created_at,
+                        u.org_id,
+                        o.name as org_name,
+                        o.address as org_address
+                    FROM users u 
+                    LEFT JOIN organisations o
+                    ON u.org_id = o.id
+                    WHERE u.id = ?"
+        );
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -51,18 +118,35 @@ class User
     {
         $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
 
-        $stmt = $this->db->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-        $stmt->execute([$data['name'], $data['email'], $hashedPassword]);
+        $stmt = $this->db->prepare("INSERT INTO users (name, email, password, org_id, designation, role, profile) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([
+            $data['name'],
+            $data['email'],
+            $hashedPassword,
+            $data['org_id'],
+            $data["designation"] ?? null,
+            $data["role"] ?? "staff",
+            $data["profile"] ?? null,
+        ]);
 
         return $this->find($this->db->lastInsertId());
     }
 
     public function update($id, $data)
     {
-        $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
-        $stmt->execute([$data['name'], $data['email'], $id]);
 
-        return $this->find($id);
+        $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ?, designation = 
+        ?, role = ?, profile = ? WHERE id = ?");
+        $stmt->execute([
+            $data['name'],
+            $data['email'],
+            $data["designation"] ?? null,
+            $data["role"] ?? "staff",
+            $data["profile"] ?? null,
+            $id
+        ]);
+
+        return $this->find($this->db->lastInsertId());
     }
 
 
@@ -85,6 +169,12 @@ class User
     }
 
     // extra methods
+    public function updateName($id, $name)
+    {
+        $stmt = $this->db->prepare('UPDATE users SET name= ? WHERE id = ?');
+        $stmt->execute([$name, $id]);
+        return $this->find($id);
+    }
 
     public function updateProfile($id, $url)
     {

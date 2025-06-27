@@ -7,11 +7,13 @@ import { toast } from "sonner";
 import api from "@/lib/axios";
 import Alerts, { AlertsProps } from "./alert";
 import QuickCards from "./quick-cards";
+import { useAuth } from "@/hooks/use-auth";
 
 
 
 
 function ChartAndAlerts() {
+    const { user } = useAuth()
     const [alerts, setAlerts] = useState<AlertsProps[]>([])
     const [budgetWarnings, setBudgetWarnings] = useState<BudgetWarning[]>([])
     const [stockWarnings, setStockWarnings] = useState<StockWarning[]>([])
@@ -42,7 +44,7 @@ function ChartAndAlerts() {
                     throw new Error('"Failed to fetch alerts"')
                 }
             } catch (error: any) {
-                toast.error(error.message || "Failed to fetch alerts")
+                toast.error(error.response?.data?.message || "Failed to fetch alerts")
             } finally {
                 setLoading(false)
             }
@@ -52,7 +54,10 @@ function ChartAndAlerts() {
     return (
         <>
             <Alerts data={alerts} />
-            <QuickCards />
+            {
+                user && (user.role == "admin" || user.role == "superadmin") &&
+                <QuickCards />
+            }
             <section className="flex flex-col xl:grid grid-cols-2 my-4 gap-4">
                 <div className="col-span-1 px-4 border-2 h-80 rounded-lg overflow-hidden space-y-2 py-2">
                     <h1 className=" font-semibold text-xl text-destructive">Low Budget</h1>
@@ -62,9 +67,11 @@ function ChartAndAlerts() {
                     <h1 className=" font-semibold text-xl text-destructive">Low Stock</h1>
                     <LowStock data={stockWarnings} loading={loading} />
                 </div>
-                <div className="col-span-2">
-                    <ExpenseIncomeChart />
-                </div>
+                {
+                    user && (user.role == "admin" || user.role == "superadmin") && <div className="col-span-2">
+                        <ExpenseIncomeChart />
+                    </div>
+                }
             </section>
         </>
     )

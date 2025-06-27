@@ -3,7 +3,7 @@ import React from 'react'
 import { Input } from './ui/input';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Button } from './ui/button';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 
 function SearchBox({ search, setSearch }: { search: string, setSearch: (search: string) => void }) {
     const [value, setValue] = React.useState(search);
@@ -15,8 +15,12 @@ function SearchBox({ search, setSearch }: { search: string, setSearch: (search: 
 
     return (
         <div className='max-w-md mx-auto mb-2 relative'>
-            <Button className='absolute right-0 hover:!bg-transparent !bg-transparent text-muted-foreground' variant='ghost' onClick={() => setSearch(value)}>
-                <Search />
+            <Button className='absolute right-0 hover:!bg-transparent !bg-transparent text-muted-foreground' variant='ghost' onClick={() => {
+                setValue("")
+            }}>
+                {search.length > 0 ?
+                    <X />
+                    : <Search />}
             </Button>
             <Input className='' placeholder='Search...' value={value} onChange={(e) => setValue(e.target.value)} />
         </div>

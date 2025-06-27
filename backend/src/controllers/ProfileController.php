@@ -25,6 +25,14 @@ class ProfileController
         return response(200, 'Profile found.', ['profile' => $data["data"]]);
     }
 
+    public function updateUsername($userId, $data)
+    {
+        if (empty($data['name'])) {
+            return response(400, 'Name is required.');
+        }
+        $data = $this->userModel->updateName($userId, $data['name']);
+        return response(200, 'Profile updated.', ['profile' => $data]);
+    }
     public function updateProfile($userId, $data)
     {
         if (empty($data['profileURL'])) {
@@ -42,12 +50,16 @@ class ProfileController
         return response(200, 'Profile updated.', ['profile' => $data]);
     }
 
-    public function updatePassword($userId, $data)
+    public function updatePassword($email, $data)
     {
-        if (empty($data['password'])) {
-            return response(400, 'Password is required.');
+        if (empty($data['currentPassword']) || empty($data['newPassword'])) {
+            return response(400, 'Current and new passwords are required.');
         }
-        $data = $this->userModel->updatePassword($userId, $data['password']);
-        return response(200, 'Profile updated.', ['profile' => $data]);
+        $user = $this->userModel->verifyPassword($email, $data['currentPassword']);
+        if (!$user) {
+            return response(401, 'Invalid password.');
+        }
+        $data = $this->userModel->updatePassword($user["id"], $data['newPassword']);
+        return response(200, 'Password Changed.', ['profile' => $data]);
     }
 }

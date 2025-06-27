@@ -23,7 +23,8 @@ const Schema = z.object({
 type FormValues = z.infer<typeof Schema>
 
 function ChangeBasics() {
-    const { user } = useAuth()
+    const { user, refreshUser } = useAuth()
+    const [loading, setLoading] = useState(false);
     const [profileLoader, setProfileLoader] = useState(false);
     const [newProfileURL, setNewProfileURL] = useState<string | null>(null)
     const inputRef = useRef<HTMLInputElement>(null)
@@ -55,8 +56,9 @@ function ChangeBasics() {
         }
         setProfileLoader(true)
         try {
+            console.log(user?.profile);
 
-            const upload = await uploadeProfileImage(inputRef.current.files[0], user?.email);
+            const upload = await uploadeProfileImage(inputRef.current.files[0], user?.profile || undefined);
             if (upload.error || !upload.url) {
                 throw new Error(upload.error ?? "Error")
             }
@@ -65,19 +67,37 @@ function ChangeBasics() {
             })
             if (status == 200) {
                 toast.success(data.message || "Success")
+                refreshUser()
+                onProfileCancel()
+
             } else {
-                throw new Error(data.message || "Error")
+                toast.error('Failed to update profile')
             }
         } catch (error: any) {
-            toast.error(error.message || 'Failed to update profile')
+            toast.error(error.response?.data?.message || 'Failed to update profile')
         } finally {
             setProfileLoader(false)
         }
     }
 
-    const onSubmit = (data: FormValues) => {
-        console.log("Form submitted with data:", data);
-        // Here you would typically send the data to your backend API to update the user profile
+    const onSubmit = async (values: FormValues) => {
+        setLoading(true)
+        try {
+            const { data, status } = await api.post("/update-username", {
+                name: values.name
+            })
+            if (status == 200) {
+                toast.success(data.message || "Success")
+                refreshUser()
+
+            } else {
+                toast.error('Failed to update name')
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to update profile')
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -131,7 +151,9 @@ function ChangeBasics() {
                                 )}
                             />
                             <div className='flex justify-end'>
-                                <Button className='w-fit'>SAVE</Button>
+                                <Button className='w-fit' disabled={loading}>
+                                    {loading ? <Loader /> : "SAVE"}
+                                </Button>
                             </div>
                         </div>
                     </div>

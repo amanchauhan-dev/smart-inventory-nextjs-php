@@ -7,7 +7,9 @@ import {
     IconCirclePlus,
     IconDashboard,
     IconListDetails,
+    IconRobot,
     IconTrendingUp,
+    IconUser,
 } from "@tabler/icons-react"
 
 import { NavMain } from "./nav-main"
@@ -24,47 +26,68 @@ import {
 import { NavUser } from "./nav-user"
 import { ProgressBarLink } from "@/contexts/progress-bar-provider"
 import { CalendarDays, X } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth"
 const data = {
     navMain: [
         {
             title: "Dashboard",
             url: "/dashboard",
             icon: IconDashboard,
+            auth: "all"
+        },
+        {
+            title: "Users",
+            url: "/users",
+            icon: IconUser,
+            auth: "admin"
         },
         {
             title: "Products",
             url: "/products",
             icon: IconListDetails,
+            auth: "all"
         },
         {
             title: "Product Categories",
             url: "/product-categories",
             icon: IconCategory,
+            auth: "all"
         },
         {
             title: "Incomes",
             url: "/incomes",
             icon: IconCirclePlus,
+            auth: "admin"
         },
         {
             title: "Income Category",
             url: "/income-category",
             icon: IconCategory,
+            auth: "all"
         },
         {
             title: "Expanses",
             url: "/expenses",
             icon: IconCircleMinus,
+            auth: "all"
         },
         {
             title: "Expense Category",
             url: "/expense-category",
             icon: IconCategory,
+            auth: "all"
         },
         {
             title: "Analytics",
             url: "/analytics",
             icon: IconTrendingUp,
+            auth: "admin"
+        },
+        {
+            title: "AI Bot",
+            url: "/ai-bot",
+            icon: IconRobot,
+            auth: "all"
         },
 
 
@@ -73,6 +96,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { isMobile, setOpenMobile } = useSidebar()
+    const { user } = useAuth()
     return (
         <Sidebar collapsible="offcanvas" {...props}>
             <SidebarHeader>
@@ -86,7 +110,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 {isMobile && <X onClick={() => setOpenMobile(false)} className="absolute right-0 top-0 cursor-pointer" size={20} />}
                                 <ProgressBarLink showActive={false} href="/dashboard" className="!text-primary flex gap-2 items-center">
                                     <CalendarDays className="!size-5" />
-                                    <span className="text-base font-semibold ">Smart Inventory</span>
+                                    <span className="text-base font-semibold ">{user?.org_name}</span>
                                 </ProgressBarLink>
                             </div>
                         </SidebarMenuButton>

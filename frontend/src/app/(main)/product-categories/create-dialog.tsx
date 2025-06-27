@@ -55,7 +55,7 @@ export function CreateDialogForm() {
                 toast.success(data?.message || 'Failed to create')
             }
         } catch (error: any) {
-            toast.error(error.message || 'Failed to create')
+            toast.error(error.response?.data?.message || 'Failed to create')
         } finally {
             setLoading(false)
             setOpen(false)
@@ -73,7 +73,7 @@ export function CreateDialogForm() {
                 <DialogHeader>
                     <DialogTitle>Add New Product Category</DialogTitle>
                     <DialogDescription>
-                        Record your category details. Click save when you&apos;re done.
+                        Record your category details. Click saaddve when you&apos;re done.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>

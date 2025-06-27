@@ -45,7 +45,7 @@ function ExpenseTable() {
     const [idToDelete, setIdToDelete] = useState<number | null>(null)
     const [categories, setCategories] = useState<ExpenseCategory[]>([])
     const [cat, setCat] = useState<string>('all')
-    const [dateFrom, setDateFrom] = useState<Date>(new Date((new Date).getFullYear(), (new Date).getMonth(), 1))
+    const [dateFrom, setDateFrom] = useState<Date | null>(null)
     const [dateTo, setDateTo] = useState<Date>(new Date())
 
     const { page, setPage, totalPages, offset, limit, setTotalRecords } = usePagination({ Limit: 10 })
@@ -65,7 +65,7 @@ function ExpenseTable() {
                 if (cat == 'all') {
                     setCat("")
                 }
-                const { data, status } = await api.get(`/expenses?date_from=${format(dateFrom, "yyyy-MM-dd")}&date_to=${format(dateTo, "yyyy-MM-dd")}&category_id=${cat}&offset=${offset}&limit=${limit}`)
+                const { data, status } = await api.get(`/expenses?date_from=${dateFrom ? format(dateFrom, "yyyy-MM-dd") : ""}&date_to=${format(dateTo, "yyyy-MM-dd")}&category_id=${cat}&offset=${offset}&limit=${limit}`)
                 if (status == 200) {
                     setData(data?.data?.expenses)
                     setTotalRecords(data?.data?.count)
@@ -73,7 +73,7 @@ function ExpenseTable() {
                     toast.error('Failed to load Expense data')
                 }
             } catch (error: any) {
-                toast.error(error.message || "Failed to load Expenses")
+                toast.error(error.response?.data?.message || "Failed to load Expenses")
             } finally {
                 setLoading(false);
             }
@@ -82,7 +82,7 @@ function ExpenseTable() {
 
     // fetch csv data
     const fetchCSV = async () => {
-        return await api.get(`/expenses?date_from=${format(dateFrom, "yyyy-MM-dd")}&date_to=${format(dateTo, "yyyy-MM-dd")}&category_id=${cat.trim()}`)
+        return await api.get(`/expenses?date_from=${dateFrom ? format(dateFrom, "yyyy-MM-dd") : ''}&date_to=${format(dateTo, "yyyy-MM-dd")}&category_id=${cat.trim()}`)
     }
 
     const onUpdate = (data: Expense) => {
@@ -111,7 +111,7 @@ function ExpenseTable() {
                 toast.error(data.message || "Failed to delete")
             }
         } catch (error: any) {
-            toast.error(error.message || "Failed to delete Expense")
+            toast.error(error.response?.data?.message || "Failed to delete Expense")
         } finally {
             setDeleteLoading(false)
         }
@@ -124,7 +124,7 @@ function ExpenseTable() {
                 const { data } = await api.get('/expense-categories')
                 setCategories(data.data.categories)
             } catch (error: any) {
-                toast.error(error.message || 'Failed to load categories')
+                toast.error(error.response?.data?.message || 'Failed to load categories')
             }
         }
         fetchCategories()
@@ -161,14 +161,14 @@ function ExpenseTable() {
                 </Select>
                 <div className='max-w-48 flex items-center border-2 bg-muted/50 rounded-lg px-2'>
                     <Label htmlFor='dateFrom'>From:</Label>
-                    <Input id='dateFrom' className='border-0 !bg-transparent  focus-visible:ring-0' type='date' value={format(dateFrom, "yyyy-MM-dd")} onChange={(e) => setDateFrom(new Date(e.target.value))} />
+                    <Input id='dateFrom' className='border-0 !bg-transparent  focus-visible:ring-0' type='date' value={dateFrom ? format(dateFrom, "yyyy-MM-dd") : ""} onChange={(e) => setDateFrom(new Date(e.target.value))} />
                 </div>
                 <div className='max-w-48 flex items-center border-2 bg-muted/50 rounded-lg px-2'>
                     <Label htmlFor='dateTo'>To</Label>
                     <Input max={format(new Date(), "yyyy-MM-dd")} id='dateTo' className='border-0 !bg-transparent focus-visible:ring-0' type='date' value={format(dateTo, "yyyy-MM-dd")} onChange={(e) => setDateTo(new Date(e.target.value))} />
                 </div>
                 <div>
-                    <DownloadCSVButton fileName={`${format(dateFrom, "yyyy-MM-dd")}-${format(dateFrom, "yyyy-MM-dd")}-expenses`} fetch={fetchCSV} dataKey='expenses' />
+                    <DownloadCSVButton fileName={`${dateFrom ? format(dateFrom, "yyyy-MM-dd") : 'All'}-${format(dateTo, "yyyy-MM-dd")}-expenses`} fetch={fetchCSV} dataKey='expenses' />
                 </div>
             </div>
             <div className="border rounded-lg overflow-hidden">

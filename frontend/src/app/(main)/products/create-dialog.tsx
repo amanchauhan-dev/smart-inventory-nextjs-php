@@ -92,7 +92,7 @@ export function CreateProductDialogForm() {
                     const { data } = await api.get('/product-categories')
                     setCategories(data.data.categories)
                 } catch (error: any) {
-                    toast.error(error.message || 'Failed to load categories')
+                    toast.error(error.response?.data?.message || 'Failed to load categories')
                 }
             }
             fetchCategories()
@@ -129,7 +129,7 @@ export function CreateProductDialogForm() {
                 <DialogHeader>
                     <DialogTitle>Add New Product</DialogTitle>
                     <DialogDescription>
-                        Enter product details. Click save when you&apos;re done.
+                        Change product details. Click add when you&apos;re done.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -232,7 +232,7 @@ export function CreateProductDialogForm() {
                                         <FormLabel>Price*</FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="number"
+                                                type="text"
                                                 placeholder="Enter price (Rupee)"
                                                 min="0"
                                                 {...field}
@@ -285,7 +285,7 @@ export function CreateProductDialogForm() {
                                 </Button>
                             </DialogClose>
                             <Button disabled={loading} type="submit">
-                                {loading ? <Loader /> : "Create Product"}
+                                {loading ? <Loader /> : "ADD"}
                             </Button>
                         </DialogFooter>
                     </form>

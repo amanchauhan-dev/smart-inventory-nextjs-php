@@ -1,6 +1,4 @@
 'use client'
-
-import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -29,8 +27,7 @@ const Schema = z.object({
 
 type SchemaType = z.infer<typeof Schema>
 
-function OTPForm({ back }: { back: () => void }) {
-    const [loading, setLoading] = useState<boolean>(false)
+function OTPForm({ back, loading, onSubmit }: { back: () => void, onSubmit: (otp: string) => Promise<any>, loading: boolean }) {
     const form = useForm<SchemaType>({
         resolver: zodResolver(Schema),
         defaultValues: {
@@ -38,15 +35,11 @@ function OTPForm({ back }: { back: () => void }) {
         },
     })
 
-    const onSubmit = async (values: SchemaType) => {
+    const onClick = async (values: SchemaType) => {
         try {
-            setLoading(true)
-            console.log(values);
-
+            await onSubmit(values.otp)
         } catch (error: any) {
-            toast.error(error?.message || "Unable to sign up")
-        } finally {
-            setLoading(true)
+            toast.error(error.response?.data?.message || "Unable to sign up")
         }
     }
 
@@ -57,11 +50,11 @@ function OTPForm({ back }: { back: () => void }) {
             transition={{ duration: 0.6 }}
             className="max-w-md mx-auto my-10 p-6 border rounded-lg shadow-sm"
         >
-            <Button type='button' size="sm" className='mb-4' onClick={back}><ChevronLeft /> Back</Button>
-            <h2 className="text-2xl font-semibold mb-6">Email Verification</h2>
+            <Button type='button' size="sm" variant={"outline"} className='mb-4' onClick={back}><ChevronLeft /> Back</Button>
+            <h2 className="text-2xl font-semibold mb-6 text-primary">Email Verification</h2>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <form onSubmit={form.handleSubmit(onClick)} className="space-y-5">
                     <FormField
                         control={form.control}
                         name="otp"

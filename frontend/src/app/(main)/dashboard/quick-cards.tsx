@@ -47,7 +47,7 @@ function QuickCards() {
                 }
 
             } catch (error: any) {
-                toast.error(error?.message || "Unable to fetch dashboard data")
+                toast.error(error.response?.data?.message || "Unable to fetch dashboard data")
             }
         })()
     }, [refreshDashboardFlage])

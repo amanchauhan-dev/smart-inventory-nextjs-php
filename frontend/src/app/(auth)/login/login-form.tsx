@@ -14,6 +14,7 @@ import api from '@/lib/axios'
 import { toast } from 'sonner'
 import Loader from '@/components/loader'
 import { useRouter } from 'next/navigation'
+import PasswordInput from '@/components/password-input'
 
 // Zod schema for login form
 const loginSchema = z.object({
@@ -43,7 +44,7 @@ function LoginForm() {
                     password: values.password
                 }
             )
-            if (status == 200) {
+            if (status && status == 200) {
                 Cookies.set('token', data.data.token.toString(), { expires: 7, path: '' })
                 progress.start();
                 startTransition(() => {
@@ -55,7 +56,7 @@ function LoginForm() {
                 toast.error(data?.message || "Wrong credentials")
             }
         } catch (error: any) {
-            toast.error(error.message || "Something went wrong")
+            toast.error(error.response?.data?.message || "Something went wrong")
         } finally {
             setLoading(false)
         }
@@ -67,7 +68,7 @@ function LoginForm() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-sm">
-            <h2 className="text-2xl font-semibold mb-6">Login</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-primary">Login</h2>
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -93,7 +94,7 @@ function LoginForm() {
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <Input type="password" placeholder="••••••••" {...field} />
+                                    <PasswordInput placeholder="••••••••" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -104,8 +105,8 @@ function LoginForm() {
                         {loading ? <Loader /> : "LOGIN"}
                     </Button>
                     <div className='flex items-center gap-2'>
-                        <p>Don;t have an account </p>
-                        <ProgressBarLink href={'/sign-up'} className="underline">Sign Up</ProgressBarLink>
+                        <p>Don&apos;t have an account </p>
+                        <ProgressBarLink href={'/register'} className="underline">register</ProgressBarLink>
                     </div>
                 </form>
             </Form>
