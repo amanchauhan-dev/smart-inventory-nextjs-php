@@ -19,7 +19,7 @@ export default function LandingComponent() {
                 </h1>
                 <p className="text-base sm:text-lg mb-6">
                     Simplify stock control with real-time alerts, low threshold warnings,
-                    and powerful analytics—all in one place.
+                    and powerful analytics—all in one place
                 </p>
                 <ProgressBarLink href={'/dashboard'}>
                     <Button>Get Started</Button>
