@@ -38,7 +38,7 @@ function LoginForm() {
     const onSubmit = async (values: LoginSchema) => {
         setLoading(true)
         try {
-            const { data, status } = await api.post("/login",
+            const { data, status } = await api.post("/auth/login",
                 {
                     email: values.email,
                     password: values.password

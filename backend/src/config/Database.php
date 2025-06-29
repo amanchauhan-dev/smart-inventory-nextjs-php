@@ -12,10 +12,10 @@ class Database
     {
         if (!self::$conn) {
             try {
-                $host = 'sql309.infinityfree.com';
-                $db = 'if0_39334812_smart_inventory';
-                $user = 'if0_39334812';
-                $pass = 'PjxdNnCbWRS47';
+                $host = 'localhost:3307';
+                $db = 'smart_inventory';
+                $user = 'root';
+                $pass = '';
                 $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
 
                 self::$conn = new PDO($dsn, $user, $pass);

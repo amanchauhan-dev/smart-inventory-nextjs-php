@@ -57,7 +57,7 @@ function Forms() {
     const onRegister = async () => {
         try {
             setLoading(true)
-            const { data, status } = await api.post("/register", {
+            const { data, status } = await api.post("/auth/register", {
                 ...form.getValues()
             })
             if (status == 201) {

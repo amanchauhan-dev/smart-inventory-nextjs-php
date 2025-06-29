@@ -44,7 +44,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         ; (async () => {
             setLoading(true)
             try {
-                const { data, status } = await api.get("/me")
+                const { data, status } = await api.get("/auth/me")
+                console.log(data)
                 if (status == 200) {
                     setUser(data.data.user)
                 } else {
@@ -55,7 +56,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                     });
                 }
             } catch (error: any) {
-                console.log(error.message);
+                console.log(error);
                 progress.start();
                 startTransition(() => {
                     router.push("/login")

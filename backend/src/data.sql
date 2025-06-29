@@ -1,23 +1,16 @@
 
-
--- USE smart_inventory;
-
-
--- Seed data for organisation table
 INSERT INTO organisations (name, address) VALUES
 ('Tech Solutions Inc.', '123 Business Park, New York, NY 10001'),
 ('Global Retailers LLC', '456 Commerce Ave, Chicago, IL 60601'),
 ('Green Foods Co.', '789 Organic Lane, San Francisco, CA 94103');
 
--- Seed data for users table
 INSERT INTO users (name, profile, email, role, designation, password, org_id) VALUES
-('John Smith', 'https://example.com/profiles/john.jpg', 'john.smith@techsolutions.com', 'superadmin', 'Owner', '$$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 1),
-('Sarah Johnson', 'https://example.com/profiles/sarah.jpg', 'sarah.j@techsolutions.com', 'staff', 'Sales Associate', '$$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 1),
-('Michael Chen', 'https://example.com/profiles/michael.jpg', 'michael.c@globalretailers.com', 'superadmin', 'Director', '$$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 2),
-('Emily Wilson', 'https://example.com/profiles/emily.jpg', 'emily.w@globalretailers.com', 'staff', 'Inventory Clerk', '$$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 2),
-('David Brown', 'https://example.com/profiles/david.jpg', 'david.b@greenfoods.com', 'superadmin', 'Owner', '$$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 3);
+('John Smith', 'https://example.com/profiles/john.jpg', 'john.smith@techsolutions.com', 'superadmin', 'Owner', '$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 1),
+('Sarah Johnson', 'https://example.com/profiles/sarah.jpg', 'sarah.j@techsolutions.com', 'staff', 'Sales Associate', '$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 1),
+('Michael Chen', 'https://example.com/profiles/michael.jpg', 'michael.c@globalretailers.com', 'superadmin', 'Director', '$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 2),
+('Emily Wilson', 'https://example.com/profiles/emily.jpg', 'emily.w@globalretailers.com', 'staff', 'Inventory Clerk', '$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 2),
+('David Brown', 'https://example.com/profiles/david.jpg', 'david.b@greenfoods.com', 'superadmin', 'Owner', '$2y$10$0JjpWD9sBFsBQFXifsTwNer.2EDb1CjOO9NHV6.LDMijTnHMbHmjG', 3);
 
--- Seed data for expense_categories table
 INSERT INTO expense_categories (org_id, name, monthly_limit) VALUES
 (1, 'Office Supplies', 500.00),
 (1, 'Utilities', 1200.00),
@@ -27,7 +20,6 @@ INSERT INTO expense_categories (org_id, name, monthly_limit) VALUES
 (3, 'Organic Certification', 800.00),
 (3, 'Farm Equipment', 1500.00);
 
--- Seed data for expenses table
 INSERT INTO expenses (org_id, category_id, amount, date, notes) VALUES
 (1, 1, 125.50, '2023-06-05', 'Printer paper, pens, notebooks'),
 (1, 2, 1150.75, '2023-06-15', 'Electricity and internet bill'),
@@ -37,7 +29,6 @@ INSERT INTO expenses (org_id, category_id, amount, date, notes) VALUES
 (3, 6, 750.00, '2023-06-01', 'Annual organic certification renewal'),
 (3, 7, 1325.50, '2023-06-25', 'New irrigation system parts');
 
--- Seed data for incomes_categories table
 INSERT INTO incomes_categories (org_id, name) VALUES
 (1, 'Software Sales'),
 (1, 'Consulting Services'),
@@ -46,7 +37,6 @@ INSERT INTO incomes_categories (org_id, name) VALUES
 (3, 'Farmers Market'),
 (3, 'Wholesale Orders');
 
--- Seed data for incomes table
 INSERT INTO incomes (org_id, amount, date, category_id, notes) VALUES
 (1, 12500.00, '2023-06-10', 1, 'Enterprise license sales'),
 (1, 7500.00, '2023-06-20', 2, 'Client implementation project'),
@@ -55,7 +45,6 @@ INSERT INTO incomes (org_id, amount, date, category_id, notes) VALUES
 (3, 8750.00, '2023-06-05', 5, 'Weekly farmers market'),
 (3, 15000.00, '2023-06-18', 6, 'Restaurant wholesale order');
 
--- Seed data for product_categories table
 INSERT INTO product_categories (org_id, name) VALUES
 (1, 'Software Licenses'),
 (1, 'Hardware'),
@@ -64,7 +53,6 @@ INSERT INTO product_categories (org_id, name) VALUES
 (3, 'Produce'),
 (3, 'Dairy');
 
--- Seed data for products table
 INSERT INTO products (org_id, category_id, name, quantity, threshold, price, supplier, notes) VALUES
 (1, 1, 'Business Pro Suite', 50, 10, 499.99, 'Internal', 'Annual subscription license'),
 (1, 1, 'Security Add-on', 75, 15, 149.99, 'Internal', 'Monthly subscription'),
