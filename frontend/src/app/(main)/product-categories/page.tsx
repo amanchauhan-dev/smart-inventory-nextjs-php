@@ -1,6 +1,5 @@
 import React from 'react'
-import IncomeTable from './table'
-import { CreateDialogForm } from './create-dialog'
+import Table from './table'
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -11,13 +10,9 @@ export const metadata: Metadata = {
 function page() {
     return (
         <main className='px-4 md:px-6 my-4 space-y-4'>
-            <section className='flex justify-start items-center'>
-                <div>
-                    <CreateDialogForm />
-                </div>
-            </section>
+
             <section>
-                <IncomeTable />
+                <Table />
             </section>
         </main>
     )

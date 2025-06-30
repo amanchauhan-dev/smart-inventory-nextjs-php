@@ -32,17 +32,21 @@ import { ExpenseCategory } from "@/validations/expense-category"
 const Schema = z.object({
     id: z.number(),
     name: z.string().min(3),
-    monthly_limit: z.number().optional(),
+    monthly_limit: z.string().min(1, "Required").refine((val) => !isNaN(Number(val)), {
+        message: "monthly_limit must be a number",
+    }).refine((val) => Number(val) >= 0, {
+        message: "monthly_limit must be a positive number",
+    }),
 })
 
-export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: ExpenseCategory | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, refresh: () => void }) {
+export function UpdateDialogForm({ data, open, setOpen, updateData }: { data: ExpenseCategory | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, updateData: (x: ExpenseCategory) => void }) {
     const id = useCallback(() => data?.id, [data])()
     const [loading, setLoading] = useState<boolean>(false)
     const form = useForm<z.infer<typeof Schema>>({
         resolver: zodResolver(Schema),
         defaultValues: {
             id: data?.id,
-            monthly_limit: data ? parseFloat(data.monthly_limit.toString()) : 0,
+            monthly_limit: data?.monthly_limit.toString() || "0",
             name: data ? data.name : '',
         },
     })
@@ -50,18 +54,19 @@ export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: Expen
         if (data) {
             form.reset({
                 id: data?.id,
-                monthly_limit: parseFloat(data.monthly_limit.toString()),
+                monthly_limit: data.monthly_limit.toString() || '0',
                 name: data.name,
             })
         }
     }, [data, form])
 
     async function onSubmit(values: z.infer<typeof Schema>) {
+        setLoading(true)
         try {
             const { data, status } = await api.put('/expense-categories/' + id, { ...values })
             if (status == 200) {
                 toast.success(data?.message || 'Updated')
-                refresh()
+                updateData(data.data.category)
             } else {
                 toast.success(data?.message || 'Failed to update')
             }
@@ -94,11 +99,10 @@ export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: Expen
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
                                         <Input
-                                            type="number"
-                                            placeholder="0.00"
-                                            min={0}
+                                            type="text"
                                             {...field}
-                                            onChange={(e) => e.target.value ? field.onChange(parseFloat(e.target.value)) : 0}
+                                            value={field.value.toString()}
+                                            onChange={(e) => field.onChange(e.target.value)}
                                         />
                                     </FormControl>
                                     <FormMessage />

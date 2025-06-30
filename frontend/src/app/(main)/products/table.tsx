@@ -34,13 +34,14 @@ import { usePagination } from '@/hooks/usePagination'
 import TablePagination from '@/components/table-pagination'
 import { Badge } from '@/components/ui/badge'
 import SearchBox from '@/components/search-box'
+import { addObject, deleteObjectById, updateObjectById } from '@/lib/data-manupulation'
 
 
 const colSpan = 8
 
 function ExpenseCategoryTable() {
     const [data, setData] = useState<Product[]>([])
-    const { refreshProducts, refreshProductsFlag } = useRefresh()
+    const { refreshProductsFlag } = useRefresh()
     const [dataToUpdate, setDataToUpdate] = useState<Product | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [openUpdate, setOpenUpdate] = useState<boolean>(false)
@@ -98,7 +99,7 @@ function ExpenseCategoryTable() {
             const { data, status } = await api.delete(`/products/${idToDelete}`)
             if (status == 200) {
                 toast.success(data.message || "Deleted");
-                refreshProducts()
+                deleteObjectById(setData, idToDelete)
             } else {
                 toast.error(data.message || "Failed to delete")
             }
@@ -123,7 +124,11 @@ function ExpenseCategoryTable() {
         <>
             <section className='flex justify-start gap-2 mb-2 items-center'>
                 <div>
-                    <CreateProductDialogForm />
+                    <CreateProductDialogForm
+                        addData={(x: Product) =>
+                            addObject(setData, x, "start")
+                        }
+                    />
                 </div>
                 <div>
                     <Select
@@ -216,7 +221,17 @@ function ExpenseCategoryTable() {
                     </TableBody>
                     <TablePagination colSpan={colSpan} totalPages={totalPages} page={page} setPage={setPage} />
                 </Table>
-                <UpdateProductDialogForm open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
+                <UpdateProductDialogForm
+                    updateData={(newData: Product) => {
+                        if (dataToUpdate) {
+                            updateObjectById(setData, dataToUpdate.id, item => ({
+                                ...item,
+                                ...newData,
+                            }));
+                        }
+                    }}
+
+                    open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
                 <DeleteAlert open={openAlert} setOpen={setOpenAlert} onAgree={handleDelete} />
             </div>
         </>

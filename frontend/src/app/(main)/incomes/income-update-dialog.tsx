@@ -40,7 +40,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { IncomeCategory } from "@/validations/income-category"
 // Define the form schema using Zod
 const incomeFormSchema = z.object({
-    amount: z.number().positive({
+    amount: z.string().min(1, "Required").refine((val) => !isNaN(Number(val)), {
+        message: "Amount must be a number",
+    }).refine((val) => Number(val) >= 0, {
         message: "Amount must be a positive number",
     }),
     date: z.date({
@@ -52,14 +54,14 @@ const incomeFormSchema = z.object({
     notes: z.string().optional(),
 })
 
-export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data: Income | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, refresh: () => void }) {
+export function UpdateIncomeDialogForm({ data, open, setOpen, updateData }: { data: Income | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, updateData: (x: Income) => void }) {
     const id = useCallback(() => data?.id, [data])()
     const [loading, setLoading] = useState<boolean>(false)
     const [categories, setCategories] = useState<IncomeCategory[]>([])
     const form = useForm<z.infer<typeof incomeFormSchema>>({
         resolver: zodResolver(incomeFormSchema),
         defaultValues: {
-            amount: data ? parseFloat(data.amount.toString()) : 0,
+            amount: data ? data.amount.toString() : "0",
             category_id: '',
             notes: data ? data.notes : '',
             date: data ? new Date(data.date) : new Date(),
@@ -69,7 +71,7 @@ export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data:
     useEffect(() => {
         if (data) {
             form.reset({
-                amount: parseFloat(data.amount.toString()),
+                amount: data.amount.toString() || "0",
                 category_id: data.category_id ? data.category_id.toString() : "",
                 notes: data.notes || '',
                 date: new Date(data.date),
@@ -91,12 +93,13 @@ export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data:
         }
     }, [open])
     async function onSubmit(values: z.infer<typeof incomeFormSchema>) {
+        setLoading(true)
         try {
-            const { data, status } = await api.put('/incomes/' + id, { ...values })
+            const { data, status } = await api.put('/incomes/' + id, { ...values, date: format(new Date(values.date), "yyyy-MM-dd") })
             if (status == 200) {
 
                 toast.success(data?.message || 'Income Updated')
-                refresh()
+                updateData(data.data.income)
             } else {
                 toast.success(data?.message || 'Failed to update income')
             }
@@ -131,9 +134,9 @@ export function UpdateIncomeDialogForm({ data, open, setOpen, refresh }: { data:
                                         <Input
                                             type="text"
                                             placeholder="0.00"
-                                            min={0}
                                             {...field}
-                                            onChange={(e) => e.target.value ? field.onChange(parseFloat(e.target.value)) : 0}
+                                            value={field.value}
+                                            onChange={(e) => field.onChange(e.target.value)}
                                         />
                                     </FormControl>
                                     <FormMessage />

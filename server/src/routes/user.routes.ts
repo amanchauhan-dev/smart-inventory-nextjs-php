@@ -9,7 +9,7 @@ export const createUserSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters."),
     role: z.enum(["staff", "admin", "superadmin"]).optional(),
     designation: z.string().optional(),
-    profile: z.string().url("Profile must be a valid URL.").optional(),
+    profile: z.string().optional(),
 });
 
 export const updateUserSchema = z.object({
@@ -17,7 +17,7 @@ export const updateUserSchema = z.object({
     email: z.string().email("Invalid email."),
     role: z.enum(["staff", "admin", "superadmin"]).optional(),
     designation: z.string().optional(),
-    profile: z.string().url("Profile must be a valid URL.").optional(),
+    profile: z.string().optional(),
 });
 const router = Router();
 

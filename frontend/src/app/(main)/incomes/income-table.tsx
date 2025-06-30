@@ -29,12 +29,13 @@ import { Label } from '@/components/ui/label'
 import DownloadCSVButton from '@/components/download-csv'
 import { IncomeCategory } from '@/validations/income-category'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { addObject, deleteObjectById, updateObjectById } from '@/lib/data-manupulation'
 
 const colSpan = 7
 
 function IncomeTable() {
     const [data, setData] = useState<Income[]>([])
-    const { refreshIncomesFlag, refreshIncomes } = useRefresh()
+    const { refreshIncomesFlag } = useRefresh()
     const [dataToUpdate, setDataToUpdate] = useState<Income | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [openUpdate, setOpenUpdate] = useState<boolean>(false)
@@ -114,7 +115,7 @@ function IncomeTable() {
             const { data, status } = await api.delete(`/incomes/${idToDelete}`)
             if (status == 200) {
                 toast.success(data.message || "Deleted");
-                refreshIncomes()
+                deleteObjectById(setData, idToDelete)
             } else {
                 toast.error(data.message || "Failed to delete")
             }
@@ -129,7 +130,10 @@ function IncomeTable() {
         <>
             <div className='mb-2 gap-2 flex items-center flex-wrap'>
                 <div>
-                    <AddIncomeDialogForm />
+                    <AddIncomeDialogForm
+                        addData={(x: Income) =>
+                            addObject(setData, x, "start")
+                        } />
                 </div>
                 <Select
                     onValueChange={(value) => setCat(value)}
@@ -220,7 +224,16 @@ function IncomeTable() {
                     </TableBody>
                     <TablePagination colSpan={colSpan} totalPages={totalPages} page={page} setPage={setPage} />
                 </Table>
-                <UpdateIncomeDialogForm refresh={refreshIncomes} open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
+                <UpdateIncomeDialogForm
+                    updateData={(newData: Income) => {
+                        if (dataToUpdate) {
+                            updateObjectById(setData, dataToUpdate.id, item => ({
+                                ...item,
+                                ...newData,
+                            }));
+                        }
+                    }}
+                    open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
                 <DeleteAlert open={openAlert} setOpen={setOpenAlert} onAgree={handleDelete} />
             </div>
         </>

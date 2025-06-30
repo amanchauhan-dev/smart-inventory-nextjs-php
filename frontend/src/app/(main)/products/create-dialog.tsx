@@ -28,7 +28,6 @@ import { toast } from "sonner"
 import { useState, useEffect } from "react"
 import api from "@/lib/axios"
 import Loader from "@/components/loader"
-import { useRefresh } from "../_components/use-refresh"
 import {
     Select,
     SelectContent,
@@ -36,6 +35,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Product } from "@/validations/product"
 
 // Define the form schema using Zod
 const ProductSchema = z.object({
@@ -65,11 +65,10 @@ interface ProductCategory {
     name: string
 }
 
-export function CreateProductDialogForm() {
+export function CreateProductDialogForm({ addData }: { addData: (x: Product) => void }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
     const [categories, setCategories] = useState<ProductCategory[]>([])
-    const { refreshProducts } = useRefresh()
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
@@ -105,7 +104,7 @@ export function CreateProductDialogForm() {
             const { data, status } = await api.post('/products', values)
             if (status === 201) {
                 toast.success(data?.message || 'Product created successfully')
-                refreshProducts()
+                addData(data.data.product)
                 form.reset()
                 setOpen(false)
             } else {

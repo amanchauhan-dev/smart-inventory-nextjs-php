@@ -8,6 +8,7 @@ import {
     IconDashboard,
     IconListDetails,
     IconRobot,
+    IconSettings,
     IconTrendingUp,
     IconUser,
 } from "@tabler/icons-react"
@@ -88,6 +89,12 @@ const data = {
             url: "/ai-bot",
             icon: IconRobot,
             auth: "all"
+        },
+        {
+            title: "Settings",
+            url: "/settings",
+            icon: IconSettings,
+            auth: "admin"
         },
 
 

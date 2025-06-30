@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 function page() {
     return (
         <main className='px-4 md:px-6 my-4 space-y-4'>
-
             <section>
                 <IncomeTable />
             </section>

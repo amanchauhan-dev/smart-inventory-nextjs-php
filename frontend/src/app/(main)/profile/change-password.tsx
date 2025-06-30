@@ -43,7 +43,7 @@ function ChangePassword() {
     const onSubmit = async (values: FormValues) => {
         setLaoding(true)
         try {
-            const { status, data } = await api.post("/update-password", {
+            const { status, data } = await api.put("/profile/password", {
                 currentPassword: values.currentPassword,
                 newPassword: values.password
             })

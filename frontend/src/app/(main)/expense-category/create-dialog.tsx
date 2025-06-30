@@ -26,33 +26,37 @@ import { toast } from "sonner"
 import { useState } from "react"
 import api from "@/lib/axios"
 import Loader from "@/components/loader"
-import { useRefresh } from "../_components/use-refresh"
+import { ExpenseCategory } from "@/validations/expense-category"
 
 // Define the form schema using Zod
 const Schema = z.object({
     name: z.string().min(3, "Category name must contain at least 3 character(s)"),
-    monthly_limit: z.number().optional(),
+    monthly_limit: z.string().min(1, "Required").refine((val) => !isNaN(Number(val)), {
+        message: "monthly_limit must be a number",
+    }).refine((val) => Number(val) >= 0, {
+        message: "monthly_limit must be a positive number",
+    }),
 })
 
-export function CreateDialogForm() {
+export function CreateDialogForm({ addData }: { addData: (x: ExpenseCategory) => void }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
-    const { refreshExpensesCategories } = useRefresh()
     const form = useForm<z.infer<typeof Schema>>({
         resolver: zodResolver(Schema),
         defaultValues: {
-            monthly_limit: 0,
+            monthly_limit: "0",
             name: '',
         },
     })
 
 
     async function onSubmit(values: z.infer<typeof Schema>) {
+        setLoading(true)
         try {
             const { data, status } = await api.post('/expense-categories', { ...values })
             if (status == 201) {
                 toast.success(data?.message || 'Created')
-                refreshExpensesCategories()
+                addData(data.data.category)
                 form.reset()
             } else {
                 toast.success(data?.message || 'Failed to create')
@@ -103,11 +107,11 @@ export function CreateDialogForm() {
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
                                         <Input
-                                            type="number"
+                                            type="text"
                                             placeholder="0.00"
-                                            min={0}
                                             {...field}
-                                            onChange={(e) => e.target.value ? field.onChange(parseFloat(e.target.value)) : 0}
+                                            value={field.value.toString()}
+                                            onChange={(e) => field.onChange(e.target.value.toString())}
                                         />
                                     </FormControl>
                                     <FormMessage />

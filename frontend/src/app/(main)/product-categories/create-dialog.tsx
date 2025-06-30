@@ -26,17 +26,16 @@ import { toast } from "sonner"
 import { useState } from "react"
 import api from "@/lib/axios"
 import Loader from "@/components/loader"
-import { useRefresh } from "../_components/use-refresh"
+import { ProductCategory } from "@/validations/product-category"
 
 // Define the form schema using Zod
 const Schema = z.object({
     name: z.string().min(3, "Category name must contain at least 3 character(s)"),
 })
 
-export function CreateDialogForm() {
+export function CreateDialogForm({ addData }: { addData: (x: ProductCategory) => void }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
-    const { refreshExpensesCategories } = useRefresh()
     const form = useForm<z.infer<typeof Schema>>({
         resolver: zodResolver(Schema),
         defaultValues: {
@@ -45,11 +44,12 @@ export function CreateDialogForm() {
     })
 
     async function onSubmit(values: z.infer<typeof Schema>) {
+        setLoading(true)
         try {
             const { data, status } = await api.post('/product-categories', { ...values })
             if (status == 201) {
                 toast.success(data?.message || 'Created')
-                refreshExpensesCategories()
+                addData(data.data.category)
                 form.reset()
             } else {
                 toast.success(data?.message || 'Failed to create')

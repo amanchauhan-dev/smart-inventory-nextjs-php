@@ -10,6 +10,7 @@ import { GoogleGenAI } from "@google/genai";
 import Markdown from "react-markdown";
 import { cn } from '@/lib/utils'
 import Loader from '@/components/loader'
+import { TrainingAIPublicData } from '@/ai/training'
 
 function AIBot() {
     const [loading, setLoading] = useState(false);
@@ -23,11 +24,12 @@ function AIBot() {
     }]);
 
 
+
     // Initialize AI chat once per component lifecycle
     const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINIE_API_KEY });
     const chat = ai.chats.create({
         model: "gemini-2.0-flash",
-        history: [...messages.map((m) => ({
+        history: [...TrainingAIPublicData, ...messages.map((m) => ({
             role: m.role === "user" ? "user" : "model",
             parts: [{ text: m.text }],
         }))],

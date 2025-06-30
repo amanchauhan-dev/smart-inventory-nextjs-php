@@ -21,10 +21,11 @@ const protectedRoutes = [
     "/expense-category",
     "/analytics",
     "/profile",
+    "/settings"
 ];
 
 // Only admin or superadmin should access
-const adminOnlyRoutes = ["/analytics", "/incomes", "/users"];
+const adminOnlyRoutes = ["/analytics", "/incomes", "/users", "/settings"];
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;

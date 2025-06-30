@@ -12,6 +12,7 @@ import ProductCatgoriesRoutes from './routes/productCategory.routes';
 import ProductRoutes from './routes/product.routes';
 import ProfileRoutes from './routes/profile.routes';
 import UserRoutes from './routes/user.routes';
+import OrganisationRoutes from './routes/organisation.routes';
 import path from 'path';
 
 const app = express();
@@ -46,6 +47,7 @@ app.use('/api/product-categories', authenticate, ProductCatgoriesRoutes);
 app.use('/api/products', authenticate, ProductRoutes);
 app.use('/api/profile', authenticate, ProfileRoutes);
 app.use('/api/users', authenticate, UserRoutes);
+app.use('/api/organisation', authenticate, OrganisationRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running 🚀');

@@ -29,6 +29,7 @@ import TablePagination from '@/components/table-pagination'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import DownloadCSVButton from '@/components/download-csv'
+import { addObject, deleteObjectById, updateObjectById } from '@/lib/data-manupulation'
 
 
 
@@ -36,7 +37,7 @@ const colSpan = 7
 
 function ExpenseTable() {
     const [data, setData] = useState<Expense[]>([])
-    const { refreshExpensesFlag, refreshExpenses } = useRefresh()
+    const { refreshExpensesFlag } = useRefresh()
     const [dataToUpdate, setDataToUpdate] = useState<Expense | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [openUpdate, setOpenUpdate] = useState<boolean>(false)
@@ -106,7 +107,7 @@ function ExpenseTable() {
             const { data, status } = await api.delete(`/expenses/${idToDelete}`)
             if (status == 200) {
                 toast.success(data.message || "Deleted");
-                refreshExpenses()
+                deleteObjectById(setData, idToDelete)
             } else {
                 toast.error(data.message || "Failed to delete")
             }
@@ -134,7 +135,9 @@ function ExpenseTable() {
         <>
             <div className='mb-2 gap-2 flex items-center flex-wrap'>
                 <div>
-                    <AddExpenseDialogForm />
+                    <AddExpenseDialogForm addData={(x: Expense) =>
+                        addObject(setData, x, "start")
+                    } />
                 </div>
                 <Select
                     onValueChange={(value) => setCat(value)}
@@ -226,7 +229,16 @@ function ExpenseTable() {
                     </TableBody>
                     <TablePagination colSpan={colSpan} totalPages={totalPages} page={page} setPage={setPage} />
                 </Table>
-                <UpdateExpenseDialogForm open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
+                <UpdateExpenseDialogForm
+                    updateData={(newData: Expense) => {
+                        if (dataToUpdate) {
+                            updateObjectById(setData, dataToUpdate.id, item => ({
+                                ...item,
+                                ...newData,
+                            }));
+                        }
+                    }}
+                    open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
                 <DeleteAlert open={openAlert} setOpen={setOpenAlert} onAgree={handleDelete} />
             </div>
         </>

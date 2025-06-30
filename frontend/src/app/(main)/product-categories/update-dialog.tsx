@@ -34,7 +34,7 @@ const Schema = z.object({
     name: z.string().min(3),
 })
 
-export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: ProductCategory | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, refresh: () => void }) {
+export function UpdateDialogForm({ data, open, setOpen, updateData }: { data: ProductCategory | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, updateData: (x: ProductCategory) => void }) {
     const id = useCallback(() => data?.id, [data])()
     const [loading, setLoading] = useState<boolean>(false)
     const form = useForm<z.infer<typeof Schema>>({
@@ -54,11 +54,12 @@ export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: Produ
     }, [data, form])
 
     async function onSubmit(values: z.infer<typeof Schema>) {
+        setLoading(true)
         try {
             const { data, status } = await api.put('/product-categories/' + id, { ...values })
             if (status == 200) {
                 toast.success(data?.message || 'Updated')
-                refresh()
+                updateData(data.data.category)
             } else {
                 toast.success(data?.message || 'Failed to update')
             }

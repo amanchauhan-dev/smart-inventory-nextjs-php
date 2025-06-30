@@ -83,7 +83,7 @@ function Forms() {
         try {
             const values = form.getValues()
 
-            const { status, data } = await api.post("/check-email", { email: values.email });
+            const { status, data } = await api.post("/auth/check-email", { email: values.email });
 
             if (status == 200 && data.data.success === false) {
                 form.setError("email", { message: "Email is already in use" })

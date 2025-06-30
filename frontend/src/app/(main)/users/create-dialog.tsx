@@ -38,9 +38,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { useRefresh } from "../_components/use-refresh"
 import { useAuth } from "@/hooks/use-auth"
 import PasswordInput from "@/components/password-input"
+import { User } from "@/validations/user"
 
 // Define the form schema using Zod
 const Schema = z.object({
@@ -63,13 +63,12 @@ const Schema = z.object({
 
 type SchemaType = z.infer<typeof Schema>
 
-export function CreateDialogForm() {
+export function CreateDialogForm({ addData }: { addData: (x: User) => void }) {
     const { user } = useAuth()
     const [loading, setLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
     const [newProfileURL, setNewProfileURL] = useState<string | null>(null)
     const inputRef = useRef<HTMLInputElement>(null)
-    const { refreshUsers } = useRefresh()
     const form = useForm<SchemaType>({
         resolver: zodResolver(Schema),
         defaultValues: {
@@ -110,17 +109,19 @@ export function CreateDialogForm() {
             }
             const { data, status } = await api.post("/users", {
                 ...values,
-                profile: url,
+                profile: url || '',
             })
             if (status == 201) {
                 toast.success(data.message || "Success")
                 form.reset()
-                refreshUsers()
+                addData(data.data.user)
                 setOpen(false)
             } else {
                 toast.error('Failed to create profile')
             }
         } catch (error: any) {
+            console.log(error);
+
             toast.error(error.response?.data?.message || 'Failed to update profile')
         } finally {
             setLoading(false)

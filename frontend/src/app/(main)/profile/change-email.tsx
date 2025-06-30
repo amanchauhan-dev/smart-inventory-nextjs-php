@@ -70,7 +70,7 @@ function ChangePassword() {
             if (error > 0) {
                 return
             }
-            const { status } = await api.post('/update-email', { email: form.getValues("email") })
+            const { status } = await api.put('/profile/email', { email: form.getValues("email") })
             if (status === 200) {
                 toast.success("Email changed succeessfully");
                 Cookies.set("token", "", { expires: new Date(-1) })
@@ -98,7 +98,7 @@ function ChangePassword() {
         }
         setLoading(true)
         try {
-            const { status, data } = await api.post("/check-email", { email: values.email });
+            const { status, data } = await api.post("/auth/check-email", { email: values.email });
             if (status == 200 && data.data.success === false) {
                 form.setError("email", { message: "Email is already in use" })
                 return

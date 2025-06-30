@@ -22,6 +22,8 @@ import Loader from '@/components/loader'
 import { ExpenseCategory } from '@/validations/expense-category'
 import { usePagination } from '@/hooks/usePagination'
 import TablePagination from '@/components/table-pagination'
+import { CreateDialogForm } from './create-dialog'
+import { addObject, deleteObjectById, updateObjectById } from '@/lib/data-manupulation'
 
 
 
@@ -29,7 +31,7 @@ const colSpan = 4
 
 function ExpenseCategoryTable() {
     const [data, setData] = useState<ExpenseCategory[]>([])
-    const { refreshExpensesCategories, refreshExpensesCategoriesFlag } = useRefresh()
+    const { refreshExpensesCategoriesFlag } = useRefresh()
     const [dataToUpdate, setDataToUpdate] = useState<ExpenseCategory | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [openUpdate, setOpenUpdate] = useState<boolean>(false)
@@ -82,7 +84,7 @@ function ExpenseCategoryTable() {
             const { data, status } = await api.delete(`/expense-categories/${idToDelete}`)
             if (status == 200) {
                 toast.success(data.message || "Deleted");
-                refreshExpensesCategories()
+                deleteObjectById(setData, idToDelete)
             } else {
                 toast.error(data.message || "Failed to delete")
             }
@@ -94,47 +96,66 @@ function ExpenseCategoryTable() {
     }
 
     return (
-        <div className="border rounded-lg overflow-hidden">
-            <Table>
-                <TableHeader className="bg-secondary">
-                    <TableRow>
-                        <TableHead className="w-[100px]">ID</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Monthly Limit</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {loading ? (
+        <>
+            <div className='mb-2 gap-2 flex items-center flex-wrap'>
+                <div>
+                    <CreateDialogForm addData={(x: ExpenseCategory) =>
+                        addObject(setData, x, "start")
+                    } />
+                </div>
+            </div>
+            <div className="border rounded-lg overflow-hidden">
+                <Table>
+                    <TableHeader className="bg-secondary">
                         <TableRow>
-                            <TableCell colSpan={colSpan}>
-                                <Skeleton className={`w-full `} style={{ height: limit * 40 }} />
-                            </TableCell>
+                            <TableHead className="w-[100px]">ID</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Monthly Limit</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
-                    )
-                        : data.map((item) => (
-                            <TableRow key={item.id}>
-                                <TableCell className="font-medium">{item.id}</TableCell>
-                                <TableCell>{item.name}</TableCell>
-                                <TableCell>{item.monthly_limit && formatCurrency(item.monthly_limit.toString())}</TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex gap-2 justify-end">
-                                        <Button variant="outline" size="icon" type='button' onClick={() => onUpdate(item)}>
-                                            <Edit className="h-4 w-4" />
-                                        </Button>
-                                        <Button variant="outline" size="icon" type='button' onClick={() => handleAlertDelete(item?.id || null)}>
-                                            {deletLoading && idToDelete === item.id ? <Loader /> : <Trash2 className="h-4 w-4" />}
-                                        </Button>
-                                    </div>
+                    </TableHeader>
+                    <TableBody>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={colSpan}>
+                                    <Skeleton className={`w-full `} style={{ height: limit * 40 }} />
                                 </TableCell>
                             </TableRow>
-                        ))}
-                </TableBody>
-                <TablePagination colSpan={colSpan} totalPages={totalPages} page={page} setPage={setPage} />
-            </Table>
-            <UpdateDialogForm refresh={refreshExpensesCategories} open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
-            <DeleteAlert open={openAlert} setOpen={setOpenAlert} onAgree={handleDelete} />
-        </div>
+                        )
+                            : data.map((item) => (
+                                <TableRow key={item.id}>
+                                    <TableCell className="font-medium">{item.id}</TableCell>
+                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell>{item.monthly_limit && formatCurrency(item.monthly_limit.toString())}</TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex gap-2 justify-end">
+                                            <Button variant="outline" size="icon" type='button' onClick={() => onUpdate(item)}>
+                                                <Edit className="h-4 w-4" />
+                                            </Button>
+                                            <Button variant="outline" size="icon" type='button' onClick={() => handleAlertDelete(item?.id || null)}>
+                                                {deletLoading && idToDelete === item.id ? <Loader /> : <Trash2 className="h-4 w-4" />}
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                    </TableBody>
+                    <TablePagination colSpan={colSpan} totalPages={totalPages} page={page} setPage={setPage} />
+                </Table>
+                <UpdateDialogForm
+                    updateData={(newData: ExpenseCategory) => {
+                        if (dataToUpdate) {
+                            updateObjectById(setData, dataToUpdate.id, item => ({
+                                ...item,
+                                ...newData,
+                            }));
+                        }
+                    }}
+                    open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
+                <DeleteAlert open={openAlert} setOpen={setOpenAlert} onAgree={handleDelete} />
+            </div>
+        </>
+
     )
 }
 

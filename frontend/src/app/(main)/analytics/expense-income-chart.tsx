@@ -57,6 +57,7 @@ export default function ExpenseIncomeChart() {
             setLoading(true)
             try {
                 const { data, status } = await api.get(`/dashboard/trends?year=${year}&month=${month}`)
+
                 if (status === 200) {
                     setChartData(data.data.data)
                     setTrend(data.data.trend)
@@ -64,7 +65,6 @@ export default function ExpenseIncomeChart() {
                     throw new Error("Failed to load graph")
                 }
             } catch (error: any) {
-                console.log(error);
 
                 toast.error(error.response?.data?.message || "Failed to load graph")
             } finally {

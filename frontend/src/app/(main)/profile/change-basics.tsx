@@ -56,20 +56,18 @@ function ChangeBasics() {
         }
         setProfileLoader(true)
         try {
-            console.log(user?.profile);
-
             const upload = await uploadeProfileImage(inputRef.current.files[0], user?.profile || undefined);
             if (upload.error || !upload.url) {
                 throw new Error(upload.error ?? "Error")
             }
-            const { data, status } = await api.post("/update-profile", {
+            const { data, status } = await api.put("/profile/picture", {
                 profileURL: upload.url
             })
+
             if (status == 200) {
                 toast.success(data.message || "Success")
                 refreshUser()
                 onProfileCancel()
-
             } else {
                 toast.error('Failed to update profile')
             }
@@ -83,7 +81,7 @@ function ChangeBasics() {
     const onSubmit = async (values: FormValues) => {
         setLoading(true)
         try {
-            const { data, status } = await api.post("/update-username", {
+            const { data, status } = await api.put("/profile/username", {
                 name: values.name
             })
             if (status == 200) {

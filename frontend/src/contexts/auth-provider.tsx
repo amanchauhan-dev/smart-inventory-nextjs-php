@@ -55,7 +55,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                     });
                 }
             } catch (error: any) {
-                console.log(error);
+                toast.error(error.messgae() || "Session Expired!");
                 progress.start();
                 startTransition(() => {
                     router.push("/login")
@@ -71,9 +71,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const refreshUser = async () => {
         try {
-            const { data, status } = await api.get("/me")
+            const { data, status } = await api.get("/profile")
             if (status == 200) {
-                setUser(data.data.user)
+                setUser(data.data.profile)
             } else {
                 throw new Error("Failes to refrech profile")
             }

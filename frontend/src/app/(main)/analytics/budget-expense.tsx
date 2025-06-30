@@ -144,7 +144,7 @@ export default function BudgetExpense() {
                                 tickFormatter={(value) => value.slice(0, 10)}
                             />
                             <YAxis
-                                domain={[0, 100000]}
+                                domain={[0, 50000]}
                                 axisLine={false}
                                 tickLine={false}
                                 tickFormatter={(v) => formatCurrency(v)}

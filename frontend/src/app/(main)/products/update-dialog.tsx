@@ -28,7 +28,6 @@ import { toast } from "sonner"
 import { useState, useEffect, Dispatch, SetStateAction, useCallback } from "react"
 import api from "@/lib/axios"
 import Loader from "@/components/loader"
-import { useRefresh } from "../_components/use-refresh"
 import {
     Select,
     SelectContent,
@@ -66,10 +65,9 @@ interface ProductCategory {
     name: string
 }
 
-export function UpdateProductDialogForm({ data, open, setOpen }: { data: Product | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) {
+export function UpdateProductDialogForm({ data, open, setOpen, updateData }: { data: Product | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, updateData: (x: Product) => void }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [categories, setCategories] = useState<ProductCategory[]>([])
-    const { refreshProducts } = useRefresh()
     const id = useCallback(() => data?.id, [data])()
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
@@ -119,7 +117,7 @@ export function UpdateProductDialogForm({ data, open, setOpen }: { data: Product
             const { data, status } = await api.put('/products/' + id, values)
             if (status === 200) {
                 toast.success(data?.message || 'Product updated successfully')
-                refreshProducts()
+                updateData(data.data.product)
                 form.reset()
                 setOpen(false)
             } else {

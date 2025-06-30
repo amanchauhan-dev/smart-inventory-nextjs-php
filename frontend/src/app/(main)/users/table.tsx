@@ -33,13 +33,14 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useAuth } from '@/hooks/use-auth'
+import { addObject, deleteObjectById, updateObjectById } from '@/lib/data-manupulation'
 
 
 const colSpan = 7
 
 function UserTable() {
     const [data, setData] = useState<User[]>([])
-    const { refreshUsers, refreshUsersFlag } = useRefresh()
+    const { refreshUsersFlag } = useRefresh()
     const [dataToUpdate, setDataToUpdate] = useState<User | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [openUpdate, setOpenUpdate] = useState<boolean>(false)
@@ -97,7 +98,7 @@ function UserTable() {
             const { data, status } = await api.delete(`/users/${idToDelete}`)
             if (status == 200) {
                 toast.success(data.message || "Deleted");
-                refreshUsers()
+                deleteObjectById(setData, idToDelete)
             } else {
                 toast.error(data.message || "Failed to delete")
             }
@@ -112,7 +113,11 @@ function UserTable() {
         <>
             <section className='flex justify-start gap-2 mb-2 items-center'>
                 <div>
-                    <CreateDialogForm />
+                    <CreateDialogForm
+                        addData={(x: User) =>
+                            addObject(setData, x, "start")
+                        }
+                    />
                 </div>
                 <div>
                     <Select
@@ -202,7 +207,16 @@ function UserTable() {
                     </TableBody>
                     <TablePagination colSpan={colSpan} totalPages={totalPages} page={page} setPage={setPage} />
                 </Table>
-                <UpdateDialogForm refresh={refreshUsers} open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
+                <UpdateDialogForm
+                    updateData={(newData: User) => {
+                        if (dataToUpdate) {
+                            updateObjectById(setData, dataToUpdate.id, item => ({
+                                ...item,
+                                ...newData,
+                            }));
+                        }
+                    }}
+                    open={openUpdate} setOpen={setOpenUpdate} data={dataToUpdate} />
                 <DeleteAlert open={openAlert} setOpen={setOpenAlert} onAgree={handleDelete} />
             </div>
         </>

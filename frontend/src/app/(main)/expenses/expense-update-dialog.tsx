@@ -46,14 +46,15 @@ import {
 } from "@/components/ui/select"
 import { ExpenseCategory } from "@/validations/expense-category"
 import { Expense } from "@/validations/expense"
-import { useRefresh } from "../_components/use-refresh"
 
 // Define the form schema using Zod
 const expenseFormSchema = z.object({
     category_id: z.string().min(1, {
         message: "Category is required",
     }),
-    amount: z.number().positive({
+    amount: z.string().min(1, "Required").refine((val) => !isNaN(Number(val)), {
+        message: "Amount must be a number",
+    }).refine((val) => Number(val) >= 0, {
         message: "Amount must be a positive number",
     }),
     date: z.date({
@@ -63,16 +64,15 @@ const expenseFormSchema = z.object({
 })
 
 
-export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) {
+export function UpdateExpenseDialogForm({ data, open, setOpen, updateData }: { data: Expense | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, updateData: (x: Expense) => void }) {
     const id = useCallback(() => data?.id, [data])()
     const [loading, setLoading] = useState<boolean>(false)
     const [categories, setCategories] = useState<ExpenseCategory[]>([])
-    const { refreshExpenses } = useRefresh()
     const form = useForm<z.infer<typeof expenseFormSchema>>({
         resolver: zodResolver(expenseFormSchema),
         defaultValues: {
             category_id: '',
-            amount: 0,
+            amount: "0",
             notes: "",
             date: new Date(),
         },
@@ -81,7 +81,7 @@ export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense
     useEffect(() => {
         if (data) {
             form.reset({
-                amount: data.amount ? parseFloat(data.amount.toString()) : 0,
+                amount: data.amount ? data.amount.toString() : "0",
                 category_id: data.category_id ? data.category_id.toString() : "",
                 notes: data.notes || '',
                 date: new Date(data.date),
@@ -113,7 +113,7 @@ export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense
 
             if (status === 200) {
                 toast.success(data?.message || 'Expense updated successfully')
-                refreshExpenses()
+                updateData(data.data.expense)
                 form.reset()
                 setOpen(false)
             } else {
@@ -180,9 +180,9 @@ export function UpdateExpenseDialogForm({ data, open, setOpen }: { data: Expense
                                         <Input
                                             type="text"
                                             placeholder="0.00"
-                                            min="0"
                                             {...field}
-                                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                            value={field.value}
+                                            onChange={(e) => field.onChange(e.target.value)}
                                         />
                                     </FormControl>
                                     <FormMessage />

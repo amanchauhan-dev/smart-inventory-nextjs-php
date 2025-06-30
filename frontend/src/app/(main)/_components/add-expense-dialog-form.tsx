@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/select"
 import { ExpenseCategory } from "@/validations/expense-category"
 import { useRefresh } from "./use-refresh"
+import { Expense } from "@/validations/expense"
 
 // Define the form schema using Zod
 const expenseFormSchema = z.object({
@@ -64,11 +65,11 @@ const expenseFormSchema = z.object({
     notes: z.string().optional(),
 })
 
-export function AddExpenseDialogForm() {
+export function AddExpenseDialogForm({ addData }: { addData?: (x: Expense) => void }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
     const [categories, setCategories] = useState<ExpenseCategory[]>([])
-    const { refreshExpenses, refreshDashboard } = useRefresh()
+    const { refreshDashboard } = useRefresh()
     const form = useForm<z.infer<typeof expenseFormSchema>>({
         resolver: zodResolver(expenseFormSchema),
         defaultValues: {
@@ -104,7 +105,7 @@ export function AddExpenseDialogForm() {
 
             if (status === 201) {
                 toast.success(data?.message || 'Expense added successfully')
-                refreshExpenses()
+                addData?.(data.data.expense)
                 refreshDashboard()
                 form.reset()
                 form.reset()

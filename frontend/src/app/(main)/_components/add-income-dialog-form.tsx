@@ -40,6 +40,7 @@ import Loader from "@/components/loader"
 import { useRefresh } from "./use-refresh"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { IncomeCategory } from "@/validations/income-category"
+import { Income } from "@/validations/income"
 
 // Define the form schema using Zod
 const incomeFormSchema = z.object({
@@ -57,9 +58,9 @@ const incomeFormSchema = z.object({
     notes: z.string().optional(),
 })
 
-export function AddIncomeDialogForm() {
+export function AddIncomeDialogForm({ addData }: { addData?: (x: Income) => void }) {
     const [loading, setLoading] = useState<boolean>(false)
-    const { refreshDashboard, refreshIncomes } = useRefresh()
+    const { refreshDashboard } = useRefresh()
     const [open, setOpen] = useState<boolean>(false)
     const [categories, setCategories] = useState<IncomeCategory[]>([])
     const form = useForm<z.infer<typeof incomeFormSchema>>({
@@ -92,7 +93,7 @@ export function AddIncomeDialogForm() {
             if (status == 201) {
                 toast.success(data?.message || 'Income added')
                 refreshDashboard()
-                refreshIncomes()
+                addData?.(data.data.income)
                 form.reset()
             } else {
                 toast.success(data?.message || 'Failed to add income')

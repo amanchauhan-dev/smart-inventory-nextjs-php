@@ -50,7 +50,7 @@ const Schema = z.object({
 
 type SchemaType = z.infer<typeof Schema>
 
-export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: User | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, refresh: () => void }) {
+export function UpdateDialogForm({ data, open, setOpen, updateData }: { data: User | null, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, updateData: (x: User) => void }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [newProfileURL, setNewProfileURL] = useState<string | null>(null)
     const inputRef = useRef<HTMLInputElement>(null)
@@ -109,17 +109,19 @@ export function UpdateDialogForm({ data, open, setOpen, refresh }: { data: User 
             }
             const { data, status } = await api.put("/users/" + user.id, {
                 ...values,
-                profile: url
+                profile: url || ''
             })
             if (status == 201) {
                 toast.success(data.message || "Success")
                 form.reset()
-                refresh()
+                updateData(data.data.user)
                 setOpen(false)
             } else {
                 toast.error('Failed to update')
             }
         } catch (error: any) {
+            console.log(error);
+
             toast.error(error.response?.data?.message || 'Failed to update user')
         } finally {
             setLoading(false)
