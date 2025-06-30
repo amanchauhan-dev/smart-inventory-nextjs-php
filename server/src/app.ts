@@ -33,7 +33,7 @@ app.use(
 
 
 app.get("/", (_, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+    res.sendFile(path.join(__dirname, "..", 'public', 'index.html'));
 })
 
 app.use('/api/auth', authRoutes);
