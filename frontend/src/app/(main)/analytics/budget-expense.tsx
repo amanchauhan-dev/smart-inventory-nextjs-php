@@ -61,7 +61,7 @@ export default function BudgetExpense() {
         ; (async () => {
             setLoading(true)
             try {
-                const { data, status } = await api.get(`/budget-expense?year=${year}&month=${month}`)
+                const { data, status } = await api.get(`/dashboard/budget-expense?year=${year}&month=${month}`)
                 if (status === 200) {
                     setChartData(data.data.data)
                 } else {

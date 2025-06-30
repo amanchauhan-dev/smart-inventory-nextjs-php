@@ -86,8 +86,9 @@ export function AddIncomeDialogForm() {
         }
     }, [open])
     async function onSubmit(values: z.infer<typeof incomeFormSchema>) {
+        setLoading(true)
         try {
-            const { data, status } = await api.post('/incomes', { ...values })
+            const { data, status } = await api.post('/incomes', { ...values, date: format(new Date(values.date), "yyyy-MM-dd") })
             if (status == 201) {
                 toast.success(data?.message || 'Income added')
                 refreshDashboard()
@@ -97,6 +98,8 @@ export function AddIncomeDialogForm() {
                 toast.success(data?.message || 'Failed to add income')
             }
         } catch (error: any) {
+            console.log(error);
+
             toast.error(error.message || 'Failed to add income')
         } finally {
             setLoading(false)

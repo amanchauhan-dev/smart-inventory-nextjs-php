@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Smart Inventory & Budget Manager - API Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="max-w-7xl mx-auto px-4 py-10">
+        <h1 class="text-4xl font-bold mb-4 text-red-600">Smart Inventory & Budget Manager</h1>
+        <p class="mb-8 text-lg">API documentation for the Next.js frontend to interact with MySQL database.</p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-2">✅ Full API List You’ll Need</h2>
+        <p class="mb-4">Divided by feature group.</p>
+
+        <!-- Auth APIs -->
+        <h3 class="text-xl font-bold mt-8 mb-2">🔐 Auth APIs</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow rounded">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-4 text-left">Method</th>
+                        <th class="py-2 px-4 text-left">Endpoint</th>
+                        <th class="py-2 px-4 text-left">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4">POST</td>
+                        <td class="py-2 px-4">/api/auth/register</td>
+                        <td class="py-2 px-4">Create a new user</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">POST</td>
+                        <td class="py-2 px-4">/api/auth/login</td>
+                        <td class="py-2 px-4">Login & return JWT token</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/auth/me</td>
+                        <td class="py-2 px-4">Get current user profile</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Dashboard APIs -->
+        <h3 class="text-xl font-bold mt-8 mb-2">📊 Dashboard APIs</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow rounded">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-4">Method</th>
+                        <th class="py-2 px-4">Endpoint</th>
+                        <th class="py-2 px-4">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/dashboard/sumary</td>
+                        <td class="py-2 px-4">Summary: total income, expenses, balance</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/dashboard/alerts</td>
+                        <td class="py-2 px-4">Budget warnings & low stock alerts</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Income APIs -->
+        <h3 class="text-xl font-bold mt-8 mb-2">💸 Income & Expense APIs</h3>
+        <h4 class="font-semibold mt-4 mb-1">💰 Income</h4>
+        <div class="overflow-x-auto mb-4">
+            <table class="min-w-full bg-white shadow rounded">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-4">Method</th>
+                        <th class="py-2 px-4">Endpoint</th>
+                        <th class="py-2 px-4">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/incomes</td>
+                        <td class="py-2 px-4">List all incomes</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">POST</td>
+                        <td class="py-2 px-4">/api/incomes</td>
+                        <td class="py-2 px-4">Add new income</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">PUT</td>
+                        <td class="py-2 px-4">/api/incomes?id</td>
+                        <td class="py-2 px-4">Update income</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">DELETE</td>
+                        <td class="py-2 px-4">/api/incomes?id</td>
+                        <td class="py-2 px-4">Delete income</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4 class="font-semibold mt-4 mb-1">🧾 Expense</h4>
+        <div class="overflow-x-auto mb-4">
+            <table class="min-w-full bg-white shadow rounded">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-4">Method</th>
+                        <th class="py-2 px-4">Endpoint</th>
+                        <th class="py-2 px-4">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/expenses</td>
+                        <td class="py-2 px-4">List all expenses</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">POST</td>
+                        <td class="py-2 px-4">/api/expenses</td>
+                        <td class="py-2 px-4">Add new expense</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">PUT</td>
+                        <td class="py-2 px-4">/api/expenses?id</td>
+                        <td class="py-2 px-4">Update expense</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">DELETE</td>
+                        <td class="py-2 px-4">/api/expenses?id</td>
+                        <td class="py-2 px-4">Delete expense</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4 class="font-semibold mt-4 mb-1">📂 Expense Categories</h4>
+        <div class="overflow-x-auto mb-4">
+            <table class="min-w-full bg-white shadow rounded">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-4">Method</th>
+                        <th class="py-2 px-4">Endpoint</th>
+                        <th class="py-2 px-4">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/expense-categories</td>
+                        <td class="py-2 px-4">List categories with limits</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">POST</td>
+                        <td class="py-2 px-4">/api/expense-categories</td>
+                        <td class="py-2 px-4">Create new category</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">PUT</td>
+                        <td class="py-2 px-4">/api/expense-categories?id</td>
+                        <td class="py-2 px-4">Update name or limit</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">DELETE</td>
+                        <td class="py-2 px-4">/api/expense-categories?id</td>
+                        <td class="py-2 px-4">Remove category</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Inventory APIs -->
+        <h3 class="text-xl font-bold mt-8 mb-2">📦 Inventory APIs</h3>
+        <h4 class="font-semibold mt-4 mb-1">📁 Product Categories</h4>
+        <div class="overflow-x-auto mb-4">
+            <table class="min-w-full bg-white shadow rounded">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-4">Method</th>
+                        <th class="py-2 px-4">Endpoint</th>
+                        <th class="py-2 px-4">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/product-categories</td>
+                        <td class="py-2 px-4">List product categories</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">POST</td>
+                        <td class="py-2 px-4">/api/product-categories</td>
+                        <td class="py-2 px-4">Create product category</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">PUT</td>
+                        <td class="py-2 px-4">/api/product-categories?id</td>
+                        <td class="py-2 px-4">Update category</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">DELETE</td>
+                        <td class="py-2 px-4">/api/product-categories?id</td>
+                        <td class="py-2 px-4">Delete category</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4 class="font-semibold mt-4 mb-1">📦 Products</h4>
+        <div class="overflow-x-auto mb-4">
+            <table class="min-w-full bg-white shadow rounded">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-4">Method</th>
+                        <th class="py-2 px-4">Endpoint</th>
+                        <th class="py-2 px-4">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/products</td>
+                        <td class="py-2 px-4">List products (all or filtered)</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">POST</td>
+                        <td class="py-2 px-4">/api/products</td>
+                        <td class="py-2 px-4">Add a product</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">PUT</td>
+                        <td class="py-2 px-4">/api/products?id</td>
+                        <td class="py-2 px-4">Update product</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">DELETE</td>
+                        <td class="py-2 px-4">/api/products?id</td>
+                        <td class="py-2 px-4">Delete product</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="mb-4">⚠️ Support query params: <code>?low_stock=true</code>, <code>?category=Electronics</code></p>
+
+        <!-- Reports APIs -->
+        <h3 class="text-xl font-bold mt-8 mb-2">📑 Reports & Export APIs</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow rounded">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-4">Method</th>
+                        <th class="py-2 px-4">Endpoint</th>
+                        <th class="py-2 px-4">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/report/summary</td>
+                        <td class="py-2 px-4">Budget summary by category (JSON)</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/report/expenses.csv</td>
+                        <td class="py-2 px-4">CSV export of all expenses</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4">GET</td>
+                        <td class="py-2 px-4">/api/report/inventory.csv</td>
+                        <td class="py-2 px-4">CSV export of inventory status</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="text-xl font-bold mt-8 mb-2">🔍 Filters Support</h3>
+        <p class="mb-2">For <code>/api/expenses</code> and <code>/api/products</code>:</p>
+        <pre class="bg-gray-100 p-4 rounded mb-4">
+GET /api/expenses?category=Rent&date_from=2024-01-01&date_to=2024-06-01
+GET /api/products?low_stock=true&category=Drinks
+    </pre>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">🧠 Summary</h2>
+        <p class="mb-4">You’ll need ~30 endpoints covering:</p>
+        <ul class="list-disc list-inside mb-4">
+            <li>Auth: register/login</li>
+            <li>Dashboard: summary & alerts</li>
+            <li>Income/Expenses: full CRUD + categories</li>
+            <li>Inventory: full CRUD + categories + alerts</li>
+            <li>Reports: CSV export & filters</li>
+        </ul>
+
+        <h2 class="text-xl font-bold mt-8 mb-2">✅ Next Steps</h2>
+        <p>Let me know if you'd like help with:</p>
+        <ul class="list-disc list-inside">
+            <li>Generating PHP router + controllers</li>
+            <li>Postman collection</li>
+            <li>JWT auth middleware setup</li>
+        </ul>
+    </div>
+
+</body>
+
+</html>

@@ -45,7 +45,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             setLoading(true)
             try {
                 const { data, status } = await api.get("/auth/me")
-                console.log(data)
                 if (status == 200) {
                     setUser(data.data.user)
                 } else {

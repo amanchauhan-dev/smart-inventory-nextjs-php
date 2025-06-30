@@ -113,6 +113,8 @@ export function AddExpenseDialogForm() {
                 toast.error(data?.message || 'Failed to add expense')
             }
         } catch (error: any) {
+            console.log(error);
+
             toast.error(error.response?.data?.message || 'Failed to add expense')
         } finally {
             setLoading(false)

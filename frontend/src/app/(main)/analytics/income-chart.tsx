@@ -53,7 +53,7 @@ export default function ChartPieLabel() {
         ; (async () => {
             setLoading(true)
             try {
-                const { data, status } = await api.get(`/income-category?year=${year}&month=${month}`)
+                const { data, status } = await api.get(`/dashboard/income-category?year=${year}&month=${month}`)
                 if (status === 200) {
                     setChartData(data.data.data.map((item: any) => ({
                         ...item,

@@ -18,7 +18,7 @@ function QuickCards() {
     useEffect(() => {
         ; (async () => {
             try {
-                const { data, status } = await api.get("/dashboard")
+                const { data, status } = await api.get("/dashboard/summary")
                 if (status === 200) {
                     setData([
                         {

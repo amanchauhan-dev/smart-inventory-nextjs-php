@@ -24,7 +24,7 @@ function ChartAndAlerts() {
             setLoading(true)
             try {
                 setAlerts([])
-                const { data, status } = await api.get('/alerts')
+                const { data, status } = await api.get('/dashboard/alerts')
                 if (status == 200) {
                     setBudgetWarnings(data.data.budget_warnings)
                     setStockWarnings(data.data.low_stock_products)
