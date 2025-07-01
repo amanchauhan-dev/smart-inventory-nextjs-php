@@ -4,6 +4,7 @@ import { cn, formatCurrency } from '@/lib/utils';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import { useRefresh } from '../_components/use-refresh';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export type CardType = {
     data: string;
@@ -14,9 +15,11 @@ export type CardType = {
 
 function QuickCards() {
     const [data, setData] = useState<CardType[]>([])
-    const { refreshDashboardFlage } = useRefresh()
+    const { refreshDashboardFlage } = useRefresh();
+    const [loading, setLoading] = useState<boolean>(true)
     useEffect(() => {
         ; (async () => {
+            setLoading(true)
             try {
                 const { data, status } = await api.get("/dashboard/summary")
                 if (status === 200) {
@@ -48,17 +51,27 @@ function QuickCards() {
 
             } catch (error: any) {
                 toast.error(error.response?.data?.message || "Unable to fetch dashboard data")
+            } finally {
+                setLoading(false)
             }
         })()
     }, [refreshDashboardFlage])
     return (
         <div className='grid sm:grid-cols-2 xl:grid-cols-4 gap-4'>
             {
-                data.map((item, i) => {
+                !loading ? data.map((item, i) => {
                     return (
                         <CardItem data={item} key={i} />
                     )
-                })
+                }) :
+                    (
+                        <>
+                            <Skeleton className='min-h-40 w-full' />
+                            <Skeleton className='min-h-40 w-full' />
+                            <Skeleton className='min-h-40 w-full' />
+                            <Skeleton className='min-h-40 w-full' />
+                        </>
+                    )
             }
         </div>
     )
